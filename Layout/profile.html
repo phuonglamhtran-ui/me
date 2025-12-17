@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Han Tran - Professional Profile & Experience | Data Analyst & BI Developer</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600;700&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 3. Centralized CSS Variables and Utility Colors */
+        :root {
+            /* Base Colors */
+            --primary-light: #f4f6f9; /* Near-white for text */
+            --primary-dark: #000000;  /* Base black */
+            /* Accent Colors */
+            --accent-color: #12d640; /* Neon Green (main accent) */
+            --accent-glow: 0 0 15px var(--accent-color); /* Neon Glow Effect */
+            --card-bg: rgba(0, 0, 0, 0.7);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- VITAL GLOBAL SCROLL LOCK --- */
+        html, body {
+            height: 100%;
+            /* Removed padding: 0 for body, as it's implied by default */
+            margin: 0;
+            overflow: hidden; /* VITAL: Prevents the main viewport scrollbar */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* 4. Improve Background Image Load: Better to preload/cache and use an optimized image. */
+            background: var(--primary-dark) url('https://images.pexels.com/photos/957962/night-photograph-starry-sky-night-sky-star-957962.jpeg') center/cover fixed;
+            color: var(--primary-light);
+        }
+        
+        /* --- INTERNAL SCROLL CONTAINER FIX --- */
+        .scrolling-content-wrapper {
+            /* VITAL: Calculates 100% of viewport height MINUS the 80px fixed header (h-20) */
+            height: calc(100vh - 80px); 
+            width: 100%;
+            overflow-y: auto; /* Enables vertical scrolling *only* within this container */
+            /* Removed redundant padding-top as the main content DIV has py/pt */
+            /* padding-top: 2rem; */ 
+        }
+        
+        /* 5. Reusable Glass Card Style */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            /* Added smooth transition for hover effects on components inside */
+            transition: all 0.5s ease;
+        }
+
+        /* Experience Timeline Style */
+        .experience-item {
+            border-left: 2px solid var(--accent-color);
+            padding-left: 2rem;
+            position: relative;
+            margin-bottom: 3rem; /* Slightly more spacing for clarity */
+            transition: all 0.3s ease;
+        }
+
+        .experience-item:hover {
+             /* Optional hover effect on the entire timeline item */
+            background: rgba(18, 214, 64, 0.03); 
+        }
+
+        .experience-item::before {
+            content: "";
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 12px; /* Increased size for visual impact */
+            height: 12px;
+            background-color: var(--accent-color);
+            border: 2px solid var(--primary-dark); /* Contrast border */
+            border-radius: 50%;
+            box-shadow: var(--accent-glow);
+            transition: all 0.3s ease;
+        }
+
+        .section-title {
+            color: var(--accent-color);
+            font-family: 'Raleway', sans-serif;
+            font-weight: 700;
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.25rem; /* Better visual separation */
+            text-transform: uppercase;
+        }
+
+        /* Skill Tag Pills */
+        .skill-badge {
+            background: rgba(18, 214, 64, 0.1);
+            color: #c5ffcd; /* Slightly lighter neon text */
+            border: 1px solid rgba(18, 214, 64, 0.3);
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        .skill-badge:hover {
+            background: var(--accent-color);
+            color: var(--primary-dark); /* Black text on hover */
+            box-shadow: var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        
+        /* Mobile menu styles */
+        #mobile-menu {
+            /* Changed from max-height/opacity to transform/visibility for smoother animation */
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; 
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none; /* Disable interaction when closed */
+        }
+        #mobile-menu.is-open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Nav link styles */
+        .nav-link { 
+            transition: all 0.3s ease; 
+            text-transform: uppercase; 
+            font-size: 13px; 
+            font-weight: 600; 
+            color: #ccc; 
+            letter-spacing: 0.05em; /* Added tracking */
+        }
+        .nav-link:hover, .nav-link.active { 
+            color: var(--accent-color) !important; 
+            text-shadow: 0 0 10px var(--accent-color); 
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] bg-black/60 backdrop-blur-md border-b border-[var(--accent-color)]/20 shadow-lg" role="banner">
+        <div class="container mx-auto flex justify-between items-center h-20 px-6 sm:px-12">
+            
+            <a href="../index.html" class="text-3xl font-bold tracking-wide" 
+               style="font-family: 'Dancing Script', cursive; color: var(--accent-color); text-shadow: var(--accent-glow);"
+               aria-label="Han Tran Home (Pansy)">
+                Pansy
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" role="navigation" aria-label="Primary Navigation">
+                <a href="../index.html" class="nav-link py-2">Home</a>
+                <a href="about.html" class="nav-link py-2">About</a>
+                <a href="profile.html" class="nav-link active py-2" aria-current="page">Experience</a>
+                <a href="portfolio.html" class="nav-link py-2">Portfolio</a>
+                <a href="story.html" class="nav-link py-2">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener" class="nav-link py-2">Resume <i class="bx bx-link-external text-sm align-super"></i></a>
+                <a href="contact.html" class="nav-link py-2">Contact</a> 
+                <div class="flex items-center space-x-4 border-l border-gray-700 pl-6 text-2xl text-gray-400">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener" class="hover:text-blue-400 transition" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/pansy" target="_blank" rel="noopener" class="hover:text-white transition" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+            </nav>
+
+            <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--accent-color)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] rounded p-1" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                <i class="bx bx-menu" id="menu-icon"></i>
+            </button>
+        </div>
+
+        <nav id="mobile-menu" class="lg:hidden fixed inset-x-0 top-20 flex-col bg-black/95 p-6 space-y-4 text-center border-t border-[var(--accent-color)]/20 shadow-xl z-[1000]" aria-hidden="true" role="navigation">
+            <a href="../index.html" class="nav-link block py-2">Home</a>
+            <a href="about.html" class="nav-link block py-2">About</a>
+            <a href="profile.html" class="nav-link active block py-2" aria-current="page">Experience</a>
+            <a href="portfolio.html" class="nav-link block py-2">Portfolio</a>
+            <a href="story.html" class="nav-link block py-2">Blog & Stories</a>
+            <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener" class="nav-link block py-2">Resume <i class="bx bx-link-external text-sm align-super"></i></a>
+            <a href="contact.html" class="nav-link block py-2">Contact</a>
+
+            <div class="flex justify-center space-x-6 pt-4 text-3xl text-gray-400">
+                <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener" class="hover:text-blue-400" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                <a href="https://github.com/coderhani/own-projects" target="_blank" rel="noopener" class="hover:text-white" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="animate-fadeIn">
+        <div class="scrolling-content-wrapper">
+            <div class="max-w-5xl mx-auto space-y-12 p-4 sm:p-8 lg:p-12">
+                
+                <header class="text-center py-8 glass-card">
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-[#c5ffcd] mb-2">Technical Orbit</h1>
+                    <p class="text-xl text-gray-300">Turning complex datasets into business intelligence constellations.</p>
+                </header>
+
+                <section class="glass-card p-8">
+                    <h2 class="text-2xl section-title">Technologies & Expertise</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
+                        <div>
+                            <h3 class="font-bold text-[#12d640] mb-4 flex items-center"><i class="bx bx-code-alt mr-2"></i> Languages & Databases</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="skill-badge px-3 py-1 rounded-full">SQL</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Python</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Snowflake</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Databricks</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-[#12d640] mb-4 flex items-center"><i class="bx bx-tachometer mr-2"></i> BI Platforms</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="skill-badge px-3 py-1 rounded-full">Power BI</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Tableau</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Salesforce</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Azure</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">SAP</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Visual Studio Code</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-[#12d640] mb-4 flex items-center"><i class="bx bx-cog mr-2"></i> Methodologies & Tools</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="skill-badge px-3 py-1 rounded-full">Project Management</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Agile/Scrum</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Data Modeling (DAX, ETL)</span>
+                                <span class="skill-badge px-3 py-1 rounded-full">Jira</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="glass-card p-8">
+                    <h2 class="text-2xl section-title">Professional Experience</h2>
+                    <div class="mt-8">
+                        <div class="experience-item">
+                            <div class="flex flex-wrap justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-[#c5ffcd]">Data Analyst & BI Developer</h3>
+                                <span class="text-sm text-[#12d640]">May 2025 – Present</span>
+                            </div>
+                            <p class="italic text-gray-400 mb-3">Freelancer / Self-Employed</p>
+                            <ul class="text-gray-300 space-y-2 list-none">
+                                <li>• Developed <b>interactive Power BI dashboards</b> and robust data models (DAX, ETL) for various clients.</li>
+                                <li>• Utilized <b>SQL, Python (Pandas/NumPy)</b>, and advanced Excel to perform deep-dive data analysis, defining key trends and KPIs.</li>
+                                <li>• Managed the full project lifecycle, from gathering requirements to delivering final reports and strategic recommendations.</li>
+                            </ul>
+                        </div>
+
+                        <div class="experience-item">
+                            <div class="flex flex-wrap justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-[#c5ffcd]">Power BI Analyst Trainee</h3>
+                                <span class="text-sm text-[#12d640]">April – Aug 2025</span>
+                            </div>
+                            <p class="italic text-gray-400 mb-3">Metso Oy Finland</p>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Created <b>dynamic dashboards</b> across Power BI, Salesforce, and Excel to meet complex business needs.</li>
+                                <li>• Consolidated disparate datasets from <b>SAP, CRM, and Dynamics</b> into structured and reliable reports.</li>
+                                <li>• Achieved <b>40% reduction in manual reporting time</b> and provided weekly analytical support to 12+ managers.</li>
+                            </ul>
+                        </div>
+                        <div class="experience-item">
+                            <div class="flex flex-wrap justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-[#c5ffcd]">Data Analyst Trainee</h3>
+                                <span class="text-sm text-[#12d640]">April 2023 – December 2023</span>
+                            </div>
+                            <p class="italic text-gray-400 mb-3">Danfoss Drives</p>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Optimized <b>Salesforce CRM pipeline data</b>, leading to improved forecasting accuracy.</li>
+                                <li>• Engineered <b>real-time KPI dashboards</b> in Power BI and Salesforce for immediate business insights.</li>
+                                <li>• <b>Automated invoice reporting</b>, resulting in a significant <b>30–40%</b> decrease in overall processing time.</li>
+                            </ul>
+                        </div>
+                        <div class="experience-item">
+                            <div class="flex flex-wrap justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-[#c5ffcd]">Corporate Sales Trainee</h3>
+                                <span class="text-sm text-[#12d640]">April 2022 – December 2022</span>
+                            </div>
+                            <p class="italic text-gray-400 mb-3">Nissan Motor Corporation</p>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Maintained <b>pricing and distribution</b> datasets for sales managers.</li>
+                                <li>• Analyzed EV sales performance using <b>Tableau, Excel, and Salesforce</b>.</li>
+                                <li>• Created quotes and interacting with customer information on <b>Oracle Siebel</b> to support the Sales department’s strategic decisions in delivery and distribution.</li>
+                            </ul>
+                        </div>
+                        <div class="experience-item">
+                            <div class="flex flex-wrap justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-[#c5ffcd]">Startup Founder</h3>
+                                <span class="text-sm text-[#12d640]">2021 – 2023</span>
+                            </div>
+                            <p class="italic text-gray-400 mb-3">PyöKylä Startup</p>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Led analytics for performance, customer behavior, and operations.</li>
+                                <li>• Managed operations: customer service, procurement, delivery.</li>
+                                <li>• Planned and executed projects and stakeholder coordination.</li>
+                                <li>• Developed marketing strategies for growth and visibility.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="glass-card p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h2 class="text-2xl section-title">Education</h2>
+                        <div class="space-y-4 text-gray-300">
+                            <div>
+                                <p class="font-bold text-white">Åbo Akademi University</p>
+                                <p class="text-sm">MSc. Governance of Digitalization (2020-2025)</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">Satakunta University of Applied Sciences</p>
+                                <p class="text-sm">BSc. Business Administration - International Business (2015-2019)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl section-title">Certifications</h2>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center"><i class="bx bx-check-circle mr-2 text-[#12d640]"></i> PRY Project Management Foundation</li>
+                            <li class="flex items-center"><i class="bx bx-check-circle mr-2 text-[#12d640]"></i> Talent Hackathon 2023 - Team Spirit</li>
+                            <li class="flex items-center"><i class="bx bx-check-circle mr-2 text-[#12d640]"></i> Power BI - Metropolia UAS Course</li>
+                            <li class="flex items-center"><i class="bx bx-check-circle mr-2 text-[#12d640]"></i> SQL - Metropolia UAS Course</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <footer class="text-center py-12 text-gray-500 text-xs">
+                    Copyright © Pansy Phuong Lam Tran
+                </footer>
+            </div>
+        </div>
+    </main>
+    
+<script>
+    // 9. Improved Mobile Menu Toggle Logic (Using classes for better control)
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const menuIcon = document.getElementById('menu-icon');
+
+    // Function to handle opening/closing
+    function toggleMobileMenu() {
+        const isOpen = mobileMenu.classList.toggle('is-open'); // Toggle the primary class
+        
+        // Toggle ARIA attributes
+        mobileToggle.setAttribute('aria-expanded', isOpen);
+        mobileMenu.setAttribute('aria-hidden', !isOpen);
+
+        // Toggle the icon (Menu <-> Close)
+        menuIcon.classList.toggle('bx-menu', !isOpen);
+        menuIcon.classList.toggle('bx-x', isOpen);
+    }
+    
+    // Function to force close
+    function closeMobileMenu() {
+        if (mobileMenu.classList.contains('is-open')) {
+            mobileMenu.classList.remove('is-open');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            menuIcon.classList.remove('bx-x');
+            menuIcon.classList.add('bx-menu');
+        }
+    }
+
+    // 1. Mobile toggle event listener
+    mobileToggle.addEventListener('click', toggleMobileMenu);
+    
+    // 2. Hide mobile menu when any link inside it is clicked
+    document.querySelectorAll('#mobile-menu a').forEach(item => {
+        item.addEventListener('click', closeMobileMenu);
+    });
+</script>
+</body>
+</html>

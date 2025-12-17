@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Han Tran - Data Analyst Portfolio: About</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Raleway:wght@400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <link href="/css/style.css" rel="stylesheet">
+
+    <style>
+        /* --- INTERNAL STYLES (Overrides/Additions for this specific page) --- */
+        
+        /* Define variables directly in root or use Tailwind config */
+        :root {
+            --primary-color: #f4f6f9;
+            --accent-color: #12d640; 
+            --header-neon: #12d640;
+        }
+
+        /* 1. Body Override: Use CSS variable for color and simplified background */
+        body {
+            /* Scroll-behavior for smooth scrolling on all anchor links (replaces JS) */
+            scroll-behavior: smooth;
+            /* Using background shorthand: color | image | repeat | position | size */
+            background: #012 url('https://images.pexels.com/photos/957962/night-photograph-starry-sky-night-sky-star-957962.jpeg') center / 100% 95% no-repeat fixed;
+            color: var(--primary-color);
+            padding-top: 80px; /* Space for fixed header (h-20 = 80px) */
+            min-height: 100vh; /* Ensure full page height */
+        }
+        
+        /* 2. REMOVED .scrolling-content-wrapper CSS, as body scroll is simpler */
+
+        /* Glassmorphism Container */
+        .glass-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Section Title (Unified) */
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(18, 214, 64, 0.3);
+        }
+
+        /* Interest Boxes Overwrite for Dark Mode */
+        .icon-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .icon-box:hover {
+            border-color: var(--accent-color);
+            background: rgba(18, 214, 64, 0.05);
+            box-shadow: 0 0 20px rgba(18, 214, 64, 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* Profile image styling */
+        .profile-frame {
+            border: 3px solid var(--accent-color);
+            box-shadow: 0 0 20px rgba(18, 214, 64, 0.4);
+            border-radius: 1rem;
+        }
+
+        /* Header link correction for this page */
+        .nav-link.active {
+            color: var(--header-neon) !important;
+            text-shadow: 0 0 10px rgba(18, 214, 64, 0.7);
+        }
+        
+        /* Mobile Menu CSS: Simplified for Tailwind utility classes */
+        /* Use Tailwind's transition, max-h-0 (hidden) and max-h-screen (open) */
+        #mobile-menu {
+            transition: max-height 0.3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] bg-black/60 backdrop-blur-md border-b border-[var(--header-neon)]/20 shadow-lg" role="banner">
+        <div class="container mx-auto flex justify-between items-center h-20 px-6 sm:px-12">
+            
+            <a href="/" class="text-3xl font-bold tracking-wide" style="font-family: 'Dancing Script', cursive; color: var(--header-neon); text-shadow: 0 0 5px var(--header-neon);">
+                Pansy
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" role="navigation" aria-label="Main Navigation">
+                <a href="../index.html" class="nav-link py-2">Home</a>
+                <a href="about.html" class="nav-link active py-2" aria-current="page">About</a>
+                <a href="profile.html" class="nav-link py-2">Experience</a>
+                <a href="portfolio.html" class="nav-link py-2">Portfolio</a>
+                <a href="story.html" class="nav-link py-2">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link py-2">Resume</a>
+                <a href="contact.html" class="nav-link py-2">Contact</a> 
+
+                <div class="flex items-center space-x-4 border-l border-gray-700 pl-6 text-2xl">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-400 transition" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/pansy" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+            </nav>
+
+            <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--header-neon)] focus:outline-none focus:ring-2 focus:ring-[var(--header-neon)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                <i class="bx bx-menu"></i>
+            </button>
+        </div>
+
+        <nav id="mobile-menu" class="lg:hidden flex-col bg-black/95 p-6 space-y-4 text-center border-t border-[var(--header-neon)]/20 max-h-0 overflow-hidden opacity-0" aria-hidden="true" role="navigation">
+            <a href="../index.html" class="nav-link block py-2" >Home</a>
+            <a href="about.html" class="nav-link active block py-2" aria-current="page">About</a>
+            <a href="profile.html" class="nav-link block py-2">Experience</a>
+            <a href="portfolio.html" class="nav-link block py-2">Portfolio</a>
+            <a href="story.html" class="nav-link block py-2">Blog & Stories</a>
+            <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link block py-2">Resume</a>
+            <a href="contact.html" class="nav-link block py-2">Contact</a>
+
+            <div class="flex justify-center space-x-6 pt-4 text-3xl">
+                <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-400" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                <a href="https://github.com/pansy" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+            </div>
+        </nav>
+    </header>
+
+<main>
+    <div class="scrolling-content-wrapper">
+        <div class="max-w-6xl mx-auto px-6 animate-fadeIn py-12">
+            
+            <div class="glass-card p-8 sm:p-12 mb-12">
+                <div class="section-title">
+                    <h2>About Me</h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+                    <div class="lg:col-span-1">
+                        <img src="../asset/profile.jpeg" class="profile-frame w-full object-cover hover:grayscale-0 transition duration-500" alt="Han Tran">
+                    </div>
+                    <div class="lg:col-span-2">
+                        <h3 class="text-3xl font-semibold mb-6 text-[#c5ffcd]">Data Analyst & BI Developer</h3>
+                        <p class="text-gray-300 leading-relaxed mb-8">
+                            Detail-oriented Business Analyst with expertise in performance analytics, data visualization, and improving reporting processes. Experienced in translating business needs into high-impact analytical solutions that enhance efficiency and decision-making in cross-functional teams.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 text-gray-300">
+                            <div class="flex items-center space-x-3">
+                                <i class='bx bx-map text-xl text-[#12d640]'></i>
+                                <span><strong>City:</strong> Espoo, Finland</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class='bx bx-envelope text-xl text-[#12d640]'></i>
+                                <span><strong>Email:</strong> phuonglam.htran@gmail.com</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class='bx bx-phone text-xl text-[#12d640]'></i>
+                                <span><strong>Phone:</strong> +358 45 783 11 883</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class='bx bx-globe text-xl text-[#12d640]'></i>
+                                <span><strong>Languages:</strong> EN, VN, FI (A2)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 sm:p-12">
+                <div class="section-title">
+                    <h2>Universe of Interests</h2>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                    
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-global-line text-4xl mb-3 text-[#ffbb2c]"></i>
+                        <h3 class="text-sm font-semibold">Data Visualization</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-database-2-line text-4xl mb-3 text-[#5578ff]"></i>
+                        <h3 class="text-sm font-semibold">Business Intelligence & Reporting</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-code-s-slash-fill text-4xl mb-3 text-[#28a745]"></i>
+                        <h3 class="text-sm font-semibold">Dashboards UI/UX</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-bar-chart-box-line text-4xl mb-3 text-[#f1081f]"></i>
+                        <h3 class="text-sm font-semibold">Predictive Analytics</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-camera-3-line text-4xl mb-3" style="color: #e80368;"></i>
+                        <h3 class="text-sm font-semibold">Digital Transformation & Information Management</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-code-s-slash-fill text-4xl mb-3" style="color: #28a745;"></i>
+                        <h3 class="text-sm font-semibold">Technology Trends & Innovation</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-bar-chart-box-line text-4xl mb-3" style="color: #f1081f;"></i>
+                        <h3 class="text-sm font-semibold">Predictive Analytics & Machine Learning (beginner interest)</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-file-list-3-line text-4xl mb-3" style="color: #47aeff;"></i>
+                        <h3 class="text-sm font-semibold">Project Management</h3>
+                    </div>
+                    <div class="icon-box p-6 flex flex-col items-center rounded-xl text-center">
+                        <i class="ri-image-line text-4xl mb-3" style="color: #ffc107;"></i>
+                        <h3 class="text-sm font-semibold">Fitness & Outdoor Activities</h3>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <footer class="text-center py-8 text-xs text-gray-500">
+                Copyright © Pansy Phuong Lam Tran.
+            </footer>
+
+        </div>
+    </div>
+</main>
+
+<script>
+    // Simplified Mobile Menu Toggle Logic
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileToggle = document.getElementById('mobile-toggle');
+
+    // Function to handle opening/closing
+    function toggleMobileMenu() {
+        const isExpanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+
+        // Toggle ARIA attributes
+        mobileToggle.setAttribute('aria-expanded', !isExpanded);
+        mobileMenu.setAttribute('aria-hidden', isExpanded);
+
+        // Toggle Tailwind classes for animation (max-height and opacity)
+        mobileMenu.classList.toggle('max-h-0');
+        mobileMenu.classList.toggle('max-h-screen');
+        mobileMenu.classList.toggle('opacity-0');
+        mobileMenu.classList.toggle('opacity-100');
+    }
+    
+    // Function to force close
+    function closeMobileMenu() {
+        if (mobileToggle.getAttribute('aria-expanded') === 'true') {
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            mobileMenu.classList.remove('max-h-screen', 'opacity-100');
+            mobileMenu.classList.add('max-h-0', 'opacity-0');
+        }
+    }
+
+    // 1. Mobile toggle event listener
+    mobileToggle.addEventListener('click', toggleMobileMenu);
+    
+    // 2. Hide mobile menu when any link inside it is clicked
+    document.querySelectorAll('#mobile-menu a').forEach(item => {
+        item.addEventListener('click', closeMobileMenu);
+    });
+
+    
+</script>
+</body>
+</html>

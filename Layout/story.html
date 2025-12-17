@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog & Stories | Han Tran Portfolio</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 1. CENTRALIZED CSS VARIABLES */
+        :root {
+            --neon-green: #12d640;
+            --neon-glow: 0 0 10px var(--neon-green);
+            --glass-bg: rgba(0, 0, 0, 0.7);
+            --glass-border: rgba(18, 214, 64, 0.2);
+            --primary-text: #ffffff;
+            --secondary-text: #ccc;
+        }
+
+        /* 2. BODY/LAYOUT ADJUSTMENTS */
+        html {
+            /* Fixes the overflow-x-hidden on the body not preventing the scrollbar due to the animation system */
+            overflow-x: hidden; 
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #012 url('https://images.pexels.com/photos/957962/night-photograph-starry-sky-night-sky-star-957962.jpeg') fixed center/cover;
+            color: var(--primary-text);
+            margin: 0;
+            /* Removed padding-top: 100px; - We will use pt-20 on main content wrapper instead */
+        }
+
+        /* --- Planetary Animation System --- (No changes needed, looks good) */
+        .system {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            background: #ffcc00;
+            border-radius: 50%;
+            box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+
+        .ear-path, .jup-path {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+
+        .ear, .jup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+        }
+
+        .ear {
+            width: 10px; height: 10px;
+            background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green);
+            animation: orbit-ear 25s linear infinite;
+        }
+
+        .jup {
+            width: 18px; height: 18px;
+            background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+
+        /* 3. Mobile Menu Styles (Using common, reliable animation classes) */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; 
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #mobile-menu.is-open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* --- UI Styles --- */
+        .nav-link {
+            transition: all 0.3s ease; 
+            text-transform: uppercase; 
+            font-size: 13px; 
+            font-weight: 600; 
+            color: #ccc; 
+            letter-spacing: 0.05em; /* Added tracking */
+        }
+        .nav-link:hover, .nav-link.active { 
+            color: var(--neon-green) !important; 
+            text-shadow: 0 0 10px var(--neon-green); 
+            transform: scale(1.05);
+        }
+
+        /* 4. Post Card Styles (Refined use of CSS variables) */
+        .post-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.4s ease;
+            cursor: pointer;
+        }
+        .post-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 25px rgba(18, 214, 64, 0.4); /* Stronger hover glow */
+        }
+
+        .post-tag {
+             /* Use CSS variables for better control */
+            color: var(--neon-green);
+            background: rgba(18, 214, 64, 0.1);
+            border: 1px solid rgba(18, 214, 64, 0.2);
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="system">
+        <div class="sun"></div>
+        <div class="ear-path"></div><div class="ear"></div>
+        <div class="jup-path"></div><div class="jup"></div>
+    </div>
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] bg-black/60 backdrop-blur-md border-b border-[var(--neon-green)]/20 shadow-lg h-20" role="banner">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            
+            <a href="../index.html" class="text-3xl font-bold tracking-wide" 
+               style="font-family: 'Dancing Script', cursive; color: var(--neon-green); text-shadow: var(--neon-glow);"
+               aria-label="Han Tran Home (Pansy)">
+                Pansy
+            </a>
+
+            <nav id="nav-menu" class="hidden lg:flex items-center space-x-8 font-medium" role="navigation" aria-label="Main Navigation">
+                <a href="../index.html" class="nav-link py-2">Home</a>
+                <a href="about.html" class="nav-link py-2">About</a>
+                <a href="profile.html" class="nav-link py-2">Experience</a>
+                <a href="portfolio.html" class="nav-link py-2">Portfolio</a>
+                <a href="story.html" class="nav-link active py-2" aria-current="page">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener" class="nav-link py-2">Resume <i class="bx bx-link-external text-sm align-super"></i></a>
+                <a href="contact.html" class="nav-link py-2">Contact</a> 
+                
+                <div class="flex items-center space-x-4 border-l border-gray-700 pl-6 text-2xl text-gray-400">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener" class="hover:text-blue-400 transition" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/pansy" target="_blank" rel="noopener" class="hover:text-white transition" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+            </nav>
+            
+            <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded p-1" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                <i class="bx bx-menu" id="menu-icon"></i>
+            </button>
+        </div>
+
+        <nav id="mobile-menu" class="lg:hidden fixed inset-x-0 top-20 flex-col bg-black/95 p-6 space-y-4 text-center border-t border-[var(--neon-green)]/20 shadow-xl z-[1000]" aria-hidden="true" role="navigation">
+            <a href="../index.html" class="nav-link block py-2">Home</a>
+            <a href="about.html" class="nav-link block py-2">About</a>
+            <a href="profile.html" class="nav-link block py-2">Experience</a>
+            <a href="portfolio.html" class="nav-link block py-2">Portfolio</a>
+            <a href="story.html" class="nav-link active block py-2" aria-current="page">Blog & Stories</a>
+            <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener" class="nav-link block py-2">Resume <i class="bx bx-link-external text-sm align-super"></i></a>
+            <a href="contact.html" class="nav-link block py-2">Contact</a>
+
+            <div class="flex justify-center space-x-6 pt-4 text-3xl text-gray-400">
+                <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener" class="hover:text-blue-400" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                <a href="https://github.com/coderhani/own-projects" target="_blank" rel="noopener" class="hover:text-white" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container mx-auto px-6 pt-20 pb-12">      
+        <section id="blog-stories" class="py-8">
+            <div class="text-center mb-12 p-8 rounded-xl bg-black/80 border-2 border-[var(--neon-green)] max-w-4xl mx-auto shadow-2xl">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-green-300 mb-4 tracking-tight">Constellation of Stories</h2>
+                <p class="text-gray-400 text-lg">Insights from my journey in data science, sustainability, and scaling startup operations.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+                <a href="../Blogpost/5story.html" class="post-card group" aria-label="Read blog post: From Startup Foundations to Global Strategy">
+                    <article>
+                        <div class="h-52 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Finance/Strategy Image">
+                        </div>
+                        <div class="p-8">
+                            <span class="post-tag px-3 py-1 rounded-full mb-4 inline-block">Blog</span>
+                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-[var(--neon-green)] transition">
+                                #5 From Startup Foundations to Global Strategy: A Business Analyst's Journey
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">How curiosity shaped a career in business analytics and strategic growth...</p>
+                            <div class="flex items-center border-t border-white/10 pt-4">
+                                <img src="../asset/profile.jpeg" class="w-10 h-10 rounded-full border border-[var(--neon-green)] mr-4" alt="Author: Pansy Phuong Lam">
+                                <div class="text-xs">
+                                    <p class="font-bold text-white">By Pansy Phuong Lam</p>
+                                    <p class="text-gray-500">Mar 08, 2023</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+
+                <a href="../Blogpost/4story.html" class="post-card group" aria-label="Read blog post: From Startup to Data-Driven Growth">
+                    <article>
+                        <div class="h-52 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Startup Image">
+                        </div>
+                        <div class="p-8">
+                            <span class="post-tag px-3 py-1 rounded-full mb-4 inline-block">Startup Story</span>
+                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-[var(--neon-green)] transition">
+                                #4 From Startup to Data-Driven Growth
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">Standing on the front lines of entrepreneurship as a founder in 2019...</p>
+                            <div class="flex items-center border-t border-white/10 pt-4">
+                                <img src="../asset/profile.jpeg" class="w-10 h-10 rounded-full border border-[var(--neon-green)] mr-4" alt="Author: Pansy Phuong Lam">
+                                <div class="text-xs">
+                                    <p class="font-bold text-white">By Pansy Phuong Lam</p>
+                                    <p class="text-gray-500">Sep 25, 2022</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+                
+                <a href="../Blogpost/3story.html" class="post-card group" aria-label="Read blog post: Power of Data Awareness">
+                    <article>
+                        <div class="h-52 overflow-hidden">
+                            <img src="https://thumbs.dreamstime.com/z/business-3d-17766936.jpg" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Business Data Image">
+                        </div>
+                        <div class="p-8">
+                            <span class="post-tag px-3 py-1 rounded-full mb-4 inline-block">Blog</span>
+                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-[var(--neon-green)] transition">
+                                #3 Power of Data Awareness
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">Every startup begins with a spark—an idea driven by instinct and passion...</p>
+                            <div class="flex items-center border-t border-white/10 pt-4">
+                                <img src="../asset/profile.jpeg" class="w-10 h-10 rounded-full border border-[var(--neon-green)] mr-4" alt="Author: Pansy Phuong Lam">
+                                <div class="text-xs">
+                                    <p class="font-bold text-white">By Pansy Phuong Lam</p>
+                                    <p class="text-gray-500">May 9, 2022</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+                
+                <a href="../Blogpost/2story.html" class="post-card group" aria-label="Read blog post: From Pedals to Progress">
+                    <article>
+                        <div class="h-52 overflow-hidden">
+                             <img src="https://thumbs.dreamstime.com/z/aerial-analysis-application-flat-lay-business-concept-115573101.jpg" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Aerial Analysis Image">
+                        </div>
+                        <div class="p-8">
+                            <span class="post-tag px-3 py-1 rounded-full mb-4 inline-block">Blog</span>
+                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-[var(--neon-green)] transition">
+                                #2 From Pedals to Progress: How Pyökylä Scaled Sustainability
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">When Pyökylä was founded in 2019 in Turku, Finland, it began as a simple....</p>
+                            <div class="flex items-center border-t border-white/10 pt-4">
+                                <img src="../asset/profile.jpeg" class="w-10 h-10 rounded-full border border-[var(--neon-green)] mr-4" alt="Author: Pansy Phuong Lam">
+                                <div class="text-xs">
+                                    <p class="font-bold text-white">By Pansy Phuong Lam</p>
+                                    <p class="text-gray-500">Apr 8, 2020</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+
+                <a href="../Blogpost/1story.html" class="post-card group" aria-label="Read blog post: The Story of Pyökylä">
+                    <article>
+                        <div class="h-52 overflow-hidden">
+                             <img src="https://thumbs.dreamstime.com/z/launch-rocket-businessman-hand-sunset-sky-background-business-concept-idea-partnership-launch-rocket-businessman-hand-195397033.jpg?ct=jpeg" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Rocket Launch Image">
+                        </div>
+                        <div class="p-8">
+                            <span class="post-tag px-3 py-1 rounded-full mb-4 inline-block">Startup Story</span>
+                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-[var(--neon-green)] transition">
+                                #1 The Story of Pyökylä: Turku’s Little Startup With a Big Heart
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">In 2019, in the vibrant student city of Turku, Finland, a small idea quietly began to roll...</p>
+                            <div class="flex items-center border-t border-white/10 pt-4">
+                                <img src="../asset/profile.jpeg" class="w-10 h-10 rounded-full border border-[var(--neon-green)] mr-4" alt="Author: Pansy Phuong Lam">
+                                <div class="text-xs">
+                                    <p class="font-bold text-white">By Pansy Phuong Lam</p>
+                                    <p class="text-gray-500">Nov 23, 2019</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-20 py-10 border-t border-[#12d640]/20 text-center bg-black/40 backdrop-blur-sm">
+        <div class="footer__copyright">
+            <small class="text-gray-400 font-semibold">Copyright © Pansy Phuong Lam Tran</small>
+        </div>
+    </footer>
+
+    <script>
+        // 7. SIMPLIFIED & CONSOLIDATED MOBILE MENU SCRIPT
+
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const navLinks = document.querySelectorAll('#mobile-menu a'); // Target mobile links
+
+        // Function to handle opening/closing
+        function toggleMobileMenu() {
+            const isOpen = mobileMenu.classList.toggle('is-open'); // Toggle the primary class
+            
+            // Toggle ARIA attributes
+            mobileToggle.setAttribute('aria-expanded', isOpen);
+            mobileMenu.setAttribute('aria-hidden', !isOpen);
+
+            // Toggle the icon (Menu <-> Close)
+            menuIcon.classList.toggle('bx-menu', !isOpen);
+            menuIcon.classList.toggle('bx-x', isOpen);
+        }
+
+        // Function to force close (used for link clicks)
+        function closeMobileMenu() {
+            if (mobileMenu.classList.contains('is-open')) {
+                mobileMenu.classList.remove('is-open');
+                mobileToggle.setAttribute('aria-expanded', 'false');
+                mobileMenu.setAttribute('aria-hidden', 'true');
+                menuIcon.classList.remove('bx-x');
+                menuIcon.classList.add('bx-menu');
+            }
+        }
+        
+        // 1. Mobile toggle event listener
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', toggleMobileMenu);
+        }
+        
+        // 2. Hide mobile menu when any link inside it is clicked
+        navLinks.forEach(item => {
+            item.addEventListener('click', closeMobileMenu);
+        });
+
+        // 8. ACTIVE PAGE LINK LOGIC
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get the current page filename (e.g., 'story.html')
+            const path = window.location.pathname.split('/').pop();
+            const currentPage = path === '' ? 'index.html' : path; // Default to index if root
+            
+            // Find all navigation links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                // Use includes for flexibility in case of path differences
+                if (link.getAttribute('href').includes(currentPage)) {
+                    link.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                } else {
+                     link.removeAttribute('aria-current');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

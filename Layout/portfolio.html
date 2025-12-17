@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects Portfolio | Han Tran</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --neon-green: #12d640;
+            --glass: rgba(0, 0, 0, 0.8);
+            --border: rgba(18, 214, 64, 0.3);
+            --header-neon-light: #f4f6f9; /* Assuming this variable is used for "Pansy" color */
+        }
+
+        /* --- GLOBAL STYLES & SCROLL FIXES --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Using background shorthand: color | image | position/size | repeat | attachment */
+            background: #012 url('https://images.pexels.com/photos/957962/night-photograph-starry-sky-night-sky-star-957962.jpeg') fixed center/cover;
+            color: white;
+            margin: 0;
+            padding-top: 80px; /* Space for fixed header (h-20 = 80px) */
+            /* Assuming html, body { overflow: hidden; } is in an external CSS file or will be added. */
+        }
+
+        /* FIX: Defines the scrollable area. It takes 100% of the viewport height and subtracts the 80px fixed header height. */
+        .scrolling-content-wrapper {
+            height: calc(100vh - 80px); 
+            width: 100%;
+            overflow-y: auto; /* Enables vertical scrolling within this container only */
+            padding-top: 1rem; /* Add some top padding if needed, but the main content has py-16 */
+        }
+
+        /* --- NAVIGATION STYLES --- */
+        .nav-link {
+            transition: all 0.3s ease; text-transform: uppercase; font-size: 13px; font-weight: 600;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green) !important; text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* --- PORTFOLIO CARD STYLES --- */
+        .portfolio-item {
+            transition: all 0.5s ease-in-out; 
+        }
+        .portfolio-img-wrap {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            overflow: hidden;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+        .portfolio-wrap {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        .portfolio-wrap:hover {
+            transform: translateY(-8px);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 35px rgba(18, 214, 64, 0.3);
+        }
+        .portfolio-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .portfolio-wrap:hover img {
+            transform: scale(1.1);
+        }
+        .portfolio-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            min-height: 100px;
+        }
+        .portfolio-content h4 {
+            color: var(--neon-green);
+            font-weight: 600;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+        .portfolio-info {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .portfolio-wrap:hover .portfolio-info {
+            opacity: 1;
+        }
+        .portfolio-info .bx-info-circle {
+            font-size: 3rem;
+        }
+
+        /* --- PROJECT FILTERS STYLING --- */
+        #portfolio-flters li {
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 8px 12px 0;
+            padding: 10px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1;
+            text-transform: uppercase;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #portfolio-flters li:hover, #portfolio-flters li.filter-active {
+            color: #fff;
+            background: var(--neon-green);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(18, 214, 64, 0.6);
+        }
+
+        /* --- PLANETARY ANIMATION (Kept for visual effect) --- */
+        .system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; pointer-events: none; }
+        .sun { position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00; transform: translate(-50%, -50%); }
+        .ear-path, .jup-path { position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 50%; transform: translate(-50%, -50%); }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear { width: 10px; height: 10px; background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite; }
+        .jup { width: 18px; height: 18px; background: #4a5568; animation: orbit-jup 50s linear infinite; }
+        @keyframes orbit-ear { from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); } }
+        @keyframes orbit-jup { from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); } }
+
+        /* Ensure the mobile menu is hidden by default and handles height on smaller screens */
+        #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <div class="system">
+        <div class="sun"></div>
+        <div class="ear-path"></div><div class="ear"></div>
+        <div class="jup-path"></div><div class="jup"></div>
+    </div>
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] bg-black/60 backdrop-blur-md border-b border-[var(--neon-green)]/20 shadow-lg h-20" role="banner">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            
+            <a href="../index.html" class="text-3xl font-bold tracking-wide" style="font-family: 'Dancing Script', cursive; color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green);">
+                Pansy
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-8 font-medium text-gray-300" role="navigation" aria-label="Main Navigation">
+                <a href="../index.html" class="nav-link py-2">Home</a>
+                <a href="about.html" class="nav-link py-2">About</a>
+                <a href="profile.html" class="nav-link py-2">Experience</a>
+                <a href="portfolio.html" class="nav-link active py-2" aria-current="page">Portfolio</a>
+                <a href="story.html" class="nav-link py-2">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link py-2">Resume</a>
+                <a href="contact.html" class="nav-link py-2">Contact</a> 
+                <div class="flex items-center space-x-4 border-l border-gray-700 pl-6 text-2xl">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-400 transition" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/pansy" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+            </nav>
+
+            <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                <i class="bx bx-menu"></i>
+            </button>
+        </div>
+
+        <nav id="mobile-menu" class="lg:hidden flex-col bg-black/95 p-6 space-y-4 text-center border-t border-[var(--neon-green)]/20 opacity-95 text-gray-300" aria-hidden="true" role="navigation">
+            <a href="../index.html" class="nav-link block py-2">Home</a>
+            <a href="about.html" class="nav-link block py-2">About</a>
+            <a href="profile.html" class="nav-link block py-2">Experience</a>
+            <a href="portfolio.html" class="nav-link active block py-2">Portfolio</a>
+            <a href="story.html" class="nav-link block py-2">Blog & Stories</a>
+            <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link block py-2">Resume</a>
+            <a href="contact.html" class="nav-link block py-2">Contact</a>
+
+            <div class="flex justify-center space-x-6 pt-4 text-3xl">
+                <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-400" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                <a href="https://github.com/coderhani/own-projects" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="scrolling-content-wrapper">
+            <div class="container mx-auto px-6 py-4">
+
+                <section id="portfolio" class="portfolio pb-12">
+                    <div class="container mx-auto">
+                        
+                        <div class="text-center mb-12 p-8 rounded-xl bg-black/80 border-2 border-[var(--neon-green)] max-w-4xl mx-auto shadow-2xl">
+                            
+                            <h2 class="text-5xl font-extrabold mb-4" style="color: var(--neon-green); text-shadow: 0 0 10px rgba(18, 214, 64, 0.5);">Portfolios</h2>
+                            <p class="text-gray-400 max-w-3xl mx-auto mb-6">A selection of my work in BI visualization, business analysis, and project management.</p>
+                            
+                            <div class="mt-8 flex justify-center">
+                                <ul id="portfolio-flters" class="flex flex-wrap justify-center gap-2">
+                                    <li data-filter="*" class="filter-active">All</li>
+                                    <li data-filter=".filter-BI">BI Visualization</li>
+                                    <li data-filter=".filter-code">SQL & Python</li> 
+                                    <li data-filter=".filter-project">Business Cases & Project</li>
+                                </ul>
+                            </div>
+                            
+                        </div>
+                        
+                        <div id="portfolio-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- Open listing  -->
+       <!-- BI  -->                            
+                            <div class="portfolio-item filter-BI">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2018/06/07/12/28/target-group-3460039_1280.jpg" alt="Customer Analysis Dashboard">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BI/BI/CustomerSegmentation.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Customer Analysis Dashboard Report</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BI  -->    
+                            <div class="portfolio-item filter-BI">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2020/10/01/08/28/smileys-5617876_1280.jpg" class="img-fluid" alt="Emotions Vector Dashboard">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BI/BI/NPS.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Net Promoter Score - Customer Insights Report</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BI  -->    
+                            <div class="portfolio-item filter-BI">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2019/11/08/10/34/cyber-4610993_1280.jpg" class="img-fluid" alt="User Behaviour Report">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BI/BI/UserBehaviour.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>User Information Behaviour & Data Protection</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BC -->    
+                            <div class="portfolio-item filter-project">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2018/07/09/21/04/integration-3527269_1280.jpg" class="img-fluid" alt="Privacy Concerns Case Study">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BusinessCase/BusinessCase/Casestudy.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Case Study: Privacy Concerns and Information Control Among Digital Users</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BC  --> 
+                            <div class="portfolio-item filter-project">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2021/07/23/19/15/truck-6488011_1280.jpg" class="img-fluid" alt="Operational Performance Analysis">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BusinessCase/BusinessCase/OperationalPerformance.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Case Study: Operational Performance & Impact Analysis</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BC  --> 
+                            <div class="portfolio-item filter-project">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2017/10/26/11/24/safety-2890768_1280.jpg" class="img-fluid" alt="Privacy Updates Analysis">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BusinessCase/BusinessCase/PrivacyUpdates.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Case Study: Privacy Updates and Control Level Analysis</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BC  --> 
+                            <div class="portfolio-item filter-project">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2015/07/17/22/42/whiteboard-849803_1280.jpg" class="img-fluid" alt="Project Synergizer">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BusinessCase/BusinessCase/SYNERGIZER.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Case Study: PROJECT CONSULTATIVE REPORT SYNERGIZER – REVIVING A FAILED IS PROJECT</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BC  --> 
+                            <div class="portfolio-item filter-project">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2020/06/23/14/32/hacker-5332764_1280.jpg" class="img-fluid" alt="RCA User Data Vulnerability">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BusinessCase/BusinessCase/RCA.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Case Study: RCA User Data Vulnerability in Digital Platforms</h4>
+                                    </div>
+                                </div>
+                            </div>
+       <!-- BC  --> 
+                            <div class="portfolio-item filter-project">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://cdn.pixabay.com/photo/2014/03/04/21/13/fingerprint-279759_1280.jpg" class="img-fluid" alt="User Information Behaviour Analysis">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/BusinessCase/BusinessCase/UserInformationBehaviourAnalysis.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Project Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>Case Study: User Information Behaviour Analysis</h4>
+                                    </div>
+                                </div>
+                            </div>
+
+       <!-- SQL Python  --> 
+                            <div class="portfolio-item filter-code">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://thumbs.dreamstime.com/z/accounting-close-up-silver-pen-lying-financial-document-copy-space-36685134.jpg?ct=jpeg" class="img-fluid" alt="SQL Portfolio: Sales & List Price">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/SQLPython/SQL1.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Code Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>#SQL: Sales & List Price</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            
+       <!-- SQL Python  --> 
+                            <div class="portfolio-item filter-code">
+                                <div class="portfolio-wrap">
+                                    <div class="portfolio-img-wrap">
+                                        <img src="https://thumbs.dreamstime.com/z/cash-3895129.jpg?ct=jpeg" class="img-fluid" alt="SQL Portfolio: Sales & List Price">
+                                        <div class="portfolio-info">
+                                            <a href="../portfolio/SQLPython/Python1.html" data-gall="portfolioDetailsGallery" data-vbtype="iframe" class="venobox text-4xl text-white/70 hover:text-white" title="Code Details"><i class="bx bx-info-circle"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="portfolio-content">
+                                        <h4>#Python: Salary Data Analysis Notebook</h4>
+                                    </div>
+                                </div>
+                            </div>
+    <!-- End listing  --> 
+
+                        </div> </div>
+                </section>
+                
+                <footer class="mt-20 py-10 border-t border-[#12d640]/20 text-center bg-black/40 backdrop-blur-sm">
+                    <div class="footer__copyright">
+                        <small class="text-gray-400 font-semibold">Copyright © Pansy Phuong Lam Tran</small>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu'); // Corrected ID usage
+        const filterList = document.getElementById('portfolio-list');
+        const filterLinks = document.querySelectorAll('#portfolio-flters li');
+
+        // --- Mobile Menu Toggle Logic (Updated for max-height transition) ---
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
+                this.setAttribute('aria-expanded', !isExpanded);
+                
+                if (!isExpanded) {
+                    // Show menu: Set max-height to scrollHeight for smooth transition
+                    mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+                    mobileMenu.setAttribute('aria-hidden', 'false');
+                } else {
+                    // Hide menu
+                    mobileMenu.style.maxHeight = '0';
+                    mobileMenu.setAttribute('aria-hidden', 'true');
+                }
+            });
+        }
+
+        // --- Portfolio Filtering Logic ---
+        function filterProjects(filter) {
+            const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+            portfolioItems.forEach(item => {
+                const itemClassList = Array.from(item.classList);
+
+                if (filter === '*' || itemClassList.includes(filter.substring(1))) {
+                    item.style.display = 'block'; // Use 'block' for grid flow
+                    item.style.opacity = '1';
+                    item.style.transform = 'scale(1)';
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'scale(0.8)';
+                    // Delay display: none to allow transition to complete
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 500); 
+                }
+            });
+        }
+
+        // Add click event to filter links
+        filterLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                filterLinks.forEach(l => l.classList.remove('filter-active'));
+                this.classList.add('filter-active');
+
+                const filterValue = this.getAttribute('data-filter');
+                filterProjects(filterValue);
+            });
+        });
+
+        // Initialize by calling the filter once to ensure correct initial state
+        filterProjects('*');
+
+        // --- Active Page Link Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const path = window.location.pathname.split('/').pop();
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                
+                if (link.getAttribute('href').endsWith(path)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+    </body>
+</html>
