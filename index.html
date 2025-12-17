@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Pansy | Personal Portfolio</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Raleway:400,600,700|Poppins:300,400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <link href="css/style.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --header-neon: #12d640;
+            --header-glow: 0 0 8px rgba(18, 214, 64, 0.6);
+            --primary-text: #e7cd88; /* The color used for the typing text */
+        }
+
+        body {
+            background-color: black;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Nav hover and active states */
+        .nav-link {
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 13px; /* Standardized size */
+            font-weight: 600; /* Standardized weight */
+        }
+        .nav-link:hover {
+            color: var(--header-neon) !important;
+            text-shadow: var(--header-glow);
+        }
+        /* Active state uses border-bottom, looks great for desktop */
+        .nav-link.active {
+            color: var(--header-neon) !important;
+            border-bottom: 2px solid var(--header-neon);
+            text-shadow: var(--header-glow);
+        }
+
+        /* Ensure Solar System stays in background */
+        .system {
+            z-index: 1 !important; /* Kept above background but below content */
+            pointer-events: none; /* Allows clicks to bypass orbits */
+        }
+
+        /* 1. Refined Mobile Menu Animation CSS */
+        #mobile-menu {
+            /* Max-height is needed for the smooth transition (along with overflow: hidden) */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none; /* Disable interaction when closed */
+        }
+        #mobile-menu.is-open {
+            /* We calculate the actual height in JS to transition smoothly */
+            max-height: 500px; /* Placeholder: JS will override this with scrollHeight */
+            opacity: 1;
+            pointer-events: auto;
+        }
+        /* Mobile menu links shouldn't have a border-bottom, remove it if it leaks from .active */
+        #mobile-menu .nav-link.active {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="text-white overflow-x-hidden">
+
+    <div class="system">
+        <div class="sun"></div>
+        <div class="mer-path"></div><div class="mer"></div>
+        <div class="ven-path"></div><div class="ven"></div>
+        <div class="ear-path"></div>
+        <div class="ear"><div class="lune"></div></div>
+        <div class="mar-path"></div>
+        <div class="mar"><div class="pho"></div><div class="dem"></div></div>
+        <div class="jup-path"></div>
+        <div class="jup">
+            <div class="jove io"></div><div class="jove eur"></div>
+            <div class="jove gan"></div><div class="jove cal"></div>
+            <div class="spot"></div>
+        </div>
+        <div class="sat-path"></div>
+        <div class="sat">
+            <div class="a-ring"></div><div class="b-ring"></div>
+            <div class="c-ring"></div><div class="f-ring"></div>
+            <div class="e-ring"></div>
+        </div>
+        <div class="ura-path"></div><div class="ura"></div>
+        <div class="nep-path"></div>
+        <div class="nep"><div class="spot"></div></div>
+        <div class="plu-path"></div><div class="plu"></div>
+    </div>
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] bg-black/60 backdrop-blur-md border-b border-[var(--header-neon)]/20 shadow-lg" role="banner">
+        <div class="container mx-auto flex justify-between items-center h-20 px-6 sm:px-12">
+            
+            <a href="index.html" class="text-3xl font-bold tracking-wide" style="font-family: 'Dancing Script', cursive; color: var(--header-neon); text-shadow: 0 0 5px var(--header-neon);" aria-label="Han Tran Home (Pansy)">
+                Pansy
+            </a>
+
+            <nav id="desktop-nav" class="hidden lg:flex items-center space-x-8 font-medium" role="navigation" aria-label="Main Navigation">
+                <a href="index.html" class="nav-link active py-2" aria-current="page">Home</a>
+                <a href="Layout/about.html" class="nav-link py-2 text-gray-300">About</a>
+                <a href="Layout/profile.html" class="nav-link py-2 text-gray-300">Experience</a>
+                <a href="Layout/portfolio.html" class="nav-link py-2 text-gray-300">Portfolio</a>
+                <a href="Layout/story.html" class="nav-link py-2 text-gray-300">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener" class="nav-link py-2 text-gray-300">Resume <i class="bx bx-link-external text-sm align-super"></i></a>
+                <a href="Layout/contact.html" class="nav-link py-2 text-gray-300">Contact</a> 
+                
+                <div class="flex items-center space-x-4 border-l border-gray-700 pl-6 text-2xl text-gray-300">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener" class="hover:text-blue-400 transition" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/own-projects" target="_blank" rel="noopener" class="hover:text-white transition" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+            </nav>
+
+            <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--header-neon)] focus:outline-none focus:ring-2 focus:ring-[var(--header-neon)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                <i class="bx bx-menu" id="menu-icon"></i>
+            </button>
+        </div>
+
+        <nav id="mobile-menu" class="lg:hidden flex-col bg-black/95 p-6 space-y-4 text-center border-t border-[var(--header-neon)]/20 shadow-xl fixed inset-x-0 top-20 z-[1000]" aria-hidden="true" role="navigation">
+            <a href="index.html" class="nav-link active block py-2" aria-current="page">Home</a>
+            <a href="Layout/about.html" class="nav-link block py-2">About</a>
+            <a href="Layout/profile.html" class="nav-link block py-2">Experience</a>
+            <a href="Layout/portfolio.html" class="nav-link block py-2">Portfolio</a>
+            <a href="Layout/story.html" class="nav-link block py-2">Blog & Stories</a>
+            <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener" class="nav-link block py-2">Resume <i class="bx bx-link-external text-sm align-super"></i></a>
+            <a href="Layout/contact.html" class="nav-link block py-2">Contact</a>
+
+            <div class="flex justify-center space-x-6 pt-4 text-3xl text-gray-300">
+                <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener" class="hover:text-blue-400" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                <a href="https://github.com/coderhani/own-projects" target="_blank" rel="noopener" class="hover:text-white" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="relative z-50">
+        <section id="hero-main" class="relative flex flex-col items-center text-center px-4 pt-32 pb-16 min-h-screen z-20">
+            <h2 class="text-5xl sm:text-5xl lg:text-5xl font-extrabold mb-4" style="color: var(--primary-color); text-shadow: 0 0 10px var(--header-neon), 0 0 20px rgba(18, 214, 64, 0.5);">
+                Hello, I'm <span class="block sm:inline">Pansy!</span>
+            </h2>
+
+            <h2 class="text-xl sm:text-3xl font-light mb-12 text-gray-200">
+                I'm a <span id="typing-text" class="font-semibold" style="color: var(--primary-text);"></span>
+            </h2>
+
+            <a href="Layout/about.html" class="group relative px-10 py-4 text-lg font-bold uppercase rounded-full border-2 border-[#12d640] text-[#12d640] overflow-hidden" aria-label="Discover Han Tran's Universe">
+                <span class="relative z-10 group-hover:text-black transition duration-500">Discover My Universe</span>
+                <div class="absolute inset-0 bg-[#12d640] translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+            </a>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script>
+        // Typed.js Animation Logic
+        var typed = new Typed('#typing-text', {
+            strings: ["Data Analyst", "BI Developer", "AI Enthusiast"],
+            loop: true,
+            typeSpeed: 65,
+            backSpeed: 45,
+            backDelay: 2000
+        });
+
+        // 4. Refined Mobile Menu Toggle Logic
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const navLinks = document.querySelectorAll('#mobile-menu .nav-link');
+
+        function toggleMobileMenu() {
+            const isOpen = mobileMenu.classList.toggle('is-open');
+            
+            mobileToggle.setAttribute('aria-expanded', isOpen);
+            mobileMenu.setAttribute('aria-hidden', !isOpen);
+
+            // Toggle icon: Menu <-> Close
+            menuIcon.classList.toggle('bx-menu', !isOpen);
+            menuIcon.classList.toggle('bx-x', isOpen);
+            
+            // Set dynamic max-height for smooth expansion
+            if (isOpen) {
+                // Set max-height to scrollHeight plus a buffer for smooth transition
+                mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+            } else {
+                mobileMenu.style.maxHeight = '0';
+            }
+        }
+
+        function closeMobileMenu() {
+            if (mobileMenu.classList.contains('is-open')) {
+                // Use the main toggle function to close gracefully
+                toggleMobileMenu();
+            }
+        }
+
+        // 1. Toggle button event listener
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', toggleMobileMenu);
+        }
+        
+        // 2. Hide mobile menu when any link inside it is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // 3. Optional: Recalculate max-height on resize if menu is open
+        window.addEventListener('resize', () => {
+            if (mobileMenu.classList.contains('is-open')) {
+                // Temporarily remove max-height to recalculate height, then reapply
+                mobileMenu.style.maxHeight = 'none';
+                mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
