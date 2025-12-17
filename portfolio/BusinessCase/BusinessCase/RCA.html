@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Root Cause Analysis (RCA) of User Data Vulnerability (Neon Theme)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'], 
+                        theme: ['Poppins', 'sans-serif'], 
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        'theme-neon': '#12d640', // Primary theme color
+                        'theme-dark': '#010410', 
+                        'theme-accent': '#a78bfa', // Purple/Indigo secondary accent
+                        // Original RCA Report Colors (for contrast/specific elements)
+                        'primary-green': '#047857', 
+                        'highlight-green': '#10B981', 
+                        'detractor-red': '#DC2626', 
+                        'passive-yellow': '#F59E0B', 
+                        'promoter-green': '#059669', 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640; 
+            --purple-accent: #a78bfa; 
+            --glass-bg: rgba(0, 0, 0, 0.75); 
+            --glass-border: rgba(18, 214, 64, 0.4); 
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4); 
+            --neon-glow-text: 0 0 5px rgba(18, 214, 64, 0.8);
+            --neon-glow-strong: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #010410; 
+            color: white; 
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover; 
+            opacity: 0.1; 
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        /* --- Custom Navigation Link Styles (for neon effect) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: var(--neon-shadow);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neon-green);
+            box-shadow: var(--neon-shadow);
+        }
+        
+        /* --- Custom List Style (Neon Bullet) --- */
+        .styled-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .styled-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--neon-green); /* Neon bullet */
+            text-shadow: 0 0 5px var(--neon-green);
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+        
+        /* Neon Button Base Style */
+        .neon-button {
+            box-shadow: 0 0 10px rgba(18, 214, 64, 0.5);
+            transition: box-shadow 0.3s, background-color 0.3s;
+        }
+        .neon-button:hover {
+            box-shadow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Close Button (IMPROVED POSITIONING) --- */
+        #close-post-btn {
+            position: fixed; 
+            top: 100px;
+            right: 20px;
+            z-index: 500;
+            font-size: 2.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        #close-post-btn:hover, #close-post-btn:focus {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            outline: none;
+        }
+        @media (min-width: 640px) { 
+            #close-post-btn {
+                top: 100px;
+                right: 40px;
+            }
+        }
+        
+        /* --- Planetary Animation System (kept for theme) --- */
+        .system {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            opacity: 0.2; 
+            pointer-events: none;
+        }
+        .sun {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+        .ear-path, .jup-path {
+            position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear {
+            width: 10px; height: 10px; background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite;
+        }
+        .jup {
+            width: 18px; height: 18px; background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+
+        /* ====================================================================== */
+        /* --- RCA Report Specific Styles (Adapted for Neon Theme) --- */
+        /* ====================================================================== */
+        
+        /* Responsive Table Container/Cell Styling (Glass Panel background for cells) */
+        .rca-table-container {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--glass-border); /* Outer glass border */
+        }
+        
+        /* Style for table headers - Neon Green */
+        .rca-header {
+            padding: 0.75rem 1rem;
+            font-weight: 700;
+            color: var(--theme-dark); /* Dark text on Neon header */
+            background-color: var(--neon-green); 
+            text-align: center;
+            /* No neon shadow on header to keep it crisp */
+        }
+        .rca-header.rca-implication-header {
+            background-color: var(--theme-accent); /* Accent Purple for Implication header */
+            color: var(--theme-dark);
+        }
+
+        /* Style for table cells - Glass background, white text */
+        .rca-cell {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Light border on dark glass */
+            background-color: var(--glass-bg);
+            color: white; /* Default text color */
+            font-size: 0.875rem;
+            line-height: 1.4;
+            /* Border-right only for grid separation (optional, but good for structure) */
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Remove last column's right border */
+        .rca-table-container > div:nth-child(4n) {
+            border-right: none;
+        }
+        /* Remove last row's bottom border */
+        .rca-table-container > div:nth-last-child(-n+4) {
+             border-bottom: none;
+        }
+
+        /* Specific styling for the 'Level' column - Faint neon background */
+        .rca-level {
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(18, 214, 64, 0.1); /* Very faint neon wash */
+            color: var(--neon-green);
+            text-shadow: 0 0 3px rgba(18, 214, 64, 0.5);
+        }
+
+        /* Specific styling for the 'Implication' column (Accent color) - Purple/Indigo Glass */
+        .rca-implication {
+            background-color: rgba(167, 139, 250, 0.1); /* Faint accent purple wash */
+            border-left: 2px solid var(--purple-accent); /* Stronger accent border */
+        }
+        .rca-implication strong {
+            color: var(--purple-accent);
+        }
+        .rca-cell strong {
+            color: var(--neon-green);
+        }
+
+        /* Mobile adaptation: Stack cells */
+        @media (max-width: 768px) {
+            .rca-table-container {
+                display: block;
+                border: 1px solid var(--glass-border);
+                margin-bottom: 1rem;
+            }
+            .rca-header {
+                display: none; /* Hide header row on mobile */
+            }
+            .rca-cell {
+                border-bottom: none;
+                padding: 0.75rem 1rem;
+                border-right: none; /* Remove vertical separation on mobile */
+            }
+            /* Reset last row/cell borders on mobile */
+             .rca-table-container > div:nth-child(4n) {
+                border-right: none;
+            }
+            .rca-table-container > div:nth-last-child(-n+4) {
+                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .rca-cell:last-child {
+                border-bottom: 2px solid var(--neon-green); /* Use neon line to separate entries */
+                margin-bottom: 1.5rem; /* Add space between sections */
+            }
+            .rca-section > .rca-table-container > div {
+                border-bottom: 1px dashed rgba(255, 255, 255, 0.1); 
+            }
+
+            /* Custom Labeling for Mobile */
+            .rca-cell::before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: var(--neon-green); 
+                text-shadow: 0 0 2px var(--neon-green);
+                display: block;
+                margin-bottom: 0.25rem;
+            }
+            .rca-implication::before {
+                color: var(--purple-accent);
+                text-shadow: 0 0 2px var(--purple-accent);
+            }
+        }
+        
+        /* Global headings for better theme integration */
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Neon-style Section Header (2. Root Cause: Cognitive Burden) */
+        .neon-section-header {
+            font-family: 'Poppins', sans-serif;
+            color: var(--neon-green);
+            text-shadow: var(--neon-glow-text);
+            border-left: 4px solid var(--neon-green);
+            padding-left: 1rem;
+            transition: all 0.3s;
+        }
+        .neon-section-header:hover {
+            text-shadow: var(--neon-glow-strong);
+        }
+        .neon-highlight-block {
+             background-color: var(--glass-bg);
+             border: 1px solid var(--neon-green);
+             box-shadow: 0 0 15px rgba(18, 214, 64, 0.3);
+             color: white;
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8 bg-theme-dark text-white antialiased">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../../../index.html" class="text-3xl font-extrabold tracking-wider text-white" style="font-family: var(--font-display, 'Dancing Script', cursive); text-decoration: none; text-shadow: 0 0 8px var(--neon-green);">
+                Pansy
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" aria-label="Main Navigation">
+                <a href="../../../index.html" class="nav-link">Home</a>
+                <a href="../../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
+                <a href="#contacts" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 hidden transition-transform duration-300 ease-in-out" aria-hidden="true">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../../Layout/portfolio.html" class="block py-2 hover:text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../../Layout/story.html" class="block py-2 text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Resume</a></li>
+            <li><a href="#contacts" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-6 sm:px-12 pt-28 pb-12" role="main">
+        <article class="relative"> 
+            
+            <a id="close-post-btn" href="../../../Layout/portfolio.html" class="text-white hover:text-[var(--neon-green)] transition duration-300" aria-label="Close Blog Post" title="Back to Portfolio Index"> 
+                <i class="bx bx-x"></i>
+            </a>
+            
+            <div class="max-w-5xl mx-auto p-0"> 
+
+                <header class="glass-panel rounded-xl p-8 mb-8 border-t-4 border-[var(--neon-green)] shadow-[var(--neon-shadow)]">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-2" style="text-shadow: var(--neon-glow-text);">Report: User Information Behaviour & Data Protection Dashboard</h1>
+                    <p class="text-xl text-red-400 font-semibold mb-4">Root Cause Analysis (RCA) of User Data Vulnerability</p>
+
+                    <div class="text-sm text-gray-300 mt-4">
+                        <p><span class="font-medium text-white">Author:</span> Pansy Phuong Lam</p>
+                        <p class="mt-1">
+                            <span class="font-medium text-white">Source:</span>
+                            <a href="https://www.doria.fi/bitstream/handle/10024/189268/tran_han.pdf?sequence=3" target="_blank" class="text-[var(--neon-green)] hover:text-white transition duration-300 break-words">Source PDF</a>
+                        </p>
+                        <p class="mt-1">
+                            <span class="font-medium text-white">Dashboard:</span>
+                            <a href="https://public.tableau.com/app/profile/hantran.fi/viz/DataPrivacyQuestionnaireDASHBOARD/OVERVIEW" target="_blank" class="text-[var(--neon-green)] hover:text-white transition duration-300 break-words">Public Tableau Dashboard</a>
+                        </p>
+                    </div>
+                </header>
+
+                <section class="neon-highlight-block p-6 rounded-xl mb-8 border-l-4 border-[var(--neon-green)]">
+                    <p class="text-lg font-semibold text-[var(--neon-green)] mb-2" style="text-shadow: 0 0 5px rgba(18, 214, 64, 0.5);">The Core Problem Identified</p>
+                    <p class="leading-relaxed text-gray-200">
+                        The core problem identified in the "User Information Behaviour" dashboard is a<strong> high discrepancy between users' concern for data privacy and their ability to protect themselves effectively</strong>. A Root Cause Analysis identifies three primary <strong>systemic failures</strong> that lead to user vulnerability, rather than mere user negligence:
+                    </p>
+                </section>
+
+                <section class="mb-10 rca-section">
+                    <h2 class="text-2xl font-bold mb-4 neon-section-header">1. Root Cause: Systemic Constraint (The "No Choice" Mandate)</h2>
+                    <p class="text-gray-400 mb-4">This is the most direct cause of user failure to protect data, as cited by <strong>93 respondents</strong> in Q20.</p>
+
+                    <div class="rca-table-container">
+                        <div class="rca-header">Level</div>
+                        <div class="rca-header">Finding from Dashboard</div>
+                        <div class="rca-header">Root Cause</div>
+                        <div class="rca-header rca-implication-header">Implication</div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Symptom</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard">Only <strong>5.43%</strong> believe they are effectively protecting their data (Q19).</div>
+                        <div class="rca-cell" data-label="Root Cause"></div>
+                        <div class="rca-cell rca-implication" data-label="Implication"></div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Proximate Cause</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard">Users feel they have <strong>no choice</strong> but to agree to policies to access services (Q20).</div>
+                        <div class="rca-cell" data-label="Root Cause">Platforms leverage market dominance to create <strong>take-it-or-leave-it</strong> consent models.</div>
+                        <div class="rca-cell rca-implication" data-label="Implication">Effective consent is absent. Users are <strong>coerced</strong> into sharing data, making self-protection impossible when data collection is a mandatory precondition for service access.</div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Root Cause</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard"></div>
+                        <div class="rca-cell" data-label="Root Cause">Platforms' business models require mandatory, broad data collection for <strong>personalization and advertising revenue</strong>.</div>
+                        <div class="rca-cell rca-implication" data-label="Implication">The entire platform economy is built on a foundation of <strong>surveillance capitalism</strong>. where data harvesting is non-negotiable for service delivery.</div>
+                    </div>
+                </section>
+
+                <section class="mb-10 rca-section">
+                    <h2 class="text-2xl font-bold mb-4 neon-section-header">2. Root Cause: Cognitive Burden (Complexity and Low Literacy)</h2>
+                    <p class="text-gray-400 mb-4">The complexity of platform tools and policies creates an overwhelming burden, leading to user apathy and inaction.</p>
+
+                    <div class="rca-table-container">
+                        <div class="rca-header">Level</div>
+                        <div class="rca-header">Finding from Dashboard</div>
+                        <div class="rca-header">Root Cause</div>
+                        <div class="rca-header rca-implication-header">Implication</div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Symptom</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard"> <strong>37.98% of users Never read</strong> privacy policies (Q18).</div>
+                        <div class="rca-cell" data-label="Root Cause"></div>
+                        <div class="rca-cell rca-implication" data-label="Implication"></div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Proximate Cause</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard">Users find understanding privacy policies/settings is <strong>difficult</strong> (75 respondents, Q20).</div>
+                        <div class="rca-cell" data-label="Root Cause">Platform interfaces are deliberately opaque: Privacy settings are often buried, technical, and require excessive effort to manage. Policies are written in dense legal jargon.</div>
+                        <div class="rca-cell rca-implication" data-label="Implication">Users are forced to default to inaction (Rarely or Never updating settings, Q11) because the effort required to manage privacy <strong>outweighs the perceived benefit</strong>.</div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Root Cause</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard"></div>
+                        <div class="rca-cell" data-label="Root Cause">Lack of mandated, standardized, and user-friendly communication of privacy policies and controls. Users lack foundational digital privacy literacy, a gap that educational institutions have not adequately filled (Q29).</div>
+                        <div class="rca-cell rca-implication" data-label="Implication"></div>
+                    </div>
+                </section>
+
+                <section class="mb-10 rca-section">
+                    <h2 class="text-2xl font-bold mb-4 neon-section-header">3. Root Cause: Governance Failure (Weak Accountability)</h2>
+                    <p class="text-gray-400 mb-4">The lack of strong, visible regulatory enforcement undermines user confidence and shifts the burden entirely onto the individual.</p>
+
+                    <div class="rca-table-container">
+                        <div class="rca-header">Level</div>
+                        <div class="rca-header">Finding from Dashboard</div>
+                        <div class="rca-header">Root Cause</div>
+                        <div class="rca-header rca-implication-header">Implication</div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Symptom</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard"> <strong>88.37% demand stricter regulations</strong> (Q26).</div>
+                        <div class="rca-cell" data-label="Root Cause"></div>
+                        <div class="rca-cell rca-implication" data-label="Implication"></div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Proximate Cause</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard">Users assign primary responsibility to <strong>Companies/organizations and National Government</strong> (Q23).</div>
+                        <div class="rca-cell" data-label="Root Cause">Governments and regulators have a perceived <strong>failure to enforce penalties</strong> and monitor platforms effectively (Q28).</div>
+                        <div class="rca-cell rca-implication" data-label="Implication">The lack of a credible external deterrent (i.e., strong government monitoring and penalties) allows companies to continue their non-consensual data collection practices.</div>
+
+                        <div class="rca-cell rca-level" data-label="Level">Root Cause</div>
+                        <div class="rca-cell" data-label="Finding from Dashboard"></div>
+                        <div class="rca-cell" data-label="Root Cause">Regulatory frameworks and enforcement mechanisms are <strong>insufficient</strong> to counteract the power and complexity of global technology companies. The lack of awareness of existing regulations like GDPR (Q21) indicates a failure in regulatory communication and impact.</div>
+                        <div class="rca-cell rca-implication" data-label="Implication"></div>
+                    </div>
+                </section>
+
+                <section class="mb-10">
+                    <h2 class="text-2xl font-bold mb-4 neon-section-header">***5 Whys Analysis: Why Do Users Fail to Protect Their Data?</h2>
+                    <p class="text-gray-400 mb-6">The core problem is traced back to fundamental systemic and economic drivers:</p>
+
+                    <div class="glass-panel p-6 rounded-xl shadow-[var(--neon-shadow)] border-2 border-[var(--neon-green)]">
+                        <p class="font-bold text-lg text-red-400 mb-4" style="text-shadow: 0 0 5px rgba(220, 38, 38, 0.5);">Core Problem: Users Fail to Protect Their Data Effectively</p>
+                        <ol class="space-y-4 list-decimal pl-5 text-gray-200 styled-list">
+                            <li><span class="font-semibold text-[var(--neon-green)]" style="text-shadow: var(--neon-glow-text);">Why? (Proximate Cause: Constraint)</span> Because users feel they have <strong>no choice</strong> but to accept broad data collection policies to access necessary digital services (Q20).</li>
+                            <li><span class="font-semibold text-[var(--neon-green)]" style="text-shadow: var(--neon-glow-text);">Why? (Systemic Requirement)</span> Because the platform's business model requires <strong>mandatory, broad data collection</strong>. They harvest personal data as the fundamental ingredient for highly profitable targeted advertising (Surveillance Capitalism).</li>
+                            <li><span class="font-semibold text-[var(--neon-green)]" style="text-shadow: var(--neon-glow-text);">Why? (Economic Incentive)</span> Because the value of hyper-personalized advertising <strong>far outweighs the current legal and reputational costs</strong> of broad data collection. The economic incentive to gather more data is greater than the incentive to respect privacy.</li>
+                            <li><span class="font-semibold text-[var(--neon-green)]" style="text-shadow: var(--neon-glow-text);">Why? (Regulatory/Governance Failure)</span> Because the regulatory frameworks are <strong>insufficient</strong> to counteract the power and complexity of global technology companies (Q26, Q28). Regulations are often slow, difficult to enforce, and do not impose high enough penalties to act as a deterrent.</li>
+                            <li><span class="font-semibold text-[var(--neon-green)]" style="text-shadow: var(--neon-glow-text);">Why? (Foundational Failure)</span> Because governments and regulatory bodies <strong>prioritize rapid technological advancement and economic growth</strong> over the fundamental digital rights of individuals. This foundational imbalance allows the "take-it-or-leave-it" consent model to persist as the global default.</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <section class="mb-10 p-6 neon-highlight-block rounded-xl shadow-lg border-2 border-[var(--neon-green)]">
+                    <h2 class="text-2xl font-bold text-[var(--neon-green)] mb-4 flex items-center" style="text-shadow: var(--neon-glow-text);">
+                        <span class="text-3xl mr-2">🎯</span> Conclusion: The Foundational Root Cause
+                    </h2>
+                    <p class="leading-relaxed text-gray-200">
+                        The fundamental root cause is the <strong>imbalance of power</strong> created by misaligned regulatory priorities, which allows surveillance capitalism to thrive unchallenged. This creates a market where companies face little risk for mandatory data harvesting, forcing the user into a vulnerable position where <strong>self-protection is practically impossible, despite high concern</strong>.
+                    </p>
+                </section>
+                
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+
+            </div>
+        </article>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileToggle.addEventListener('click', () => {
+                const isExpanded = mobileMenu.classList.contains('hidden');
+                mobileMenu.classList.toggle('hidden', !isExpanded);
+                mobileToggle.setAttribute('aria-expanded', isExpanded);
+                mobileToggle.querySelector('i').classList.toggle('bx-menu', !isExpanded);
+                mobileToggle.querySelector('i').classList.toggle('bx-x', isExpanded);
+            });
+        });
+    </script>
+</body>
+</html>

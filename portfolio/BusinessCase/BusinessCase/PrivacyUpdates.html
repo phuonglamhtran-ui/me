@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Report: User Information Behaviour & Data Protection Privacy Updates and Control Level (Neon Theme)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Inter for body/report text (sans-serif default)
+                        sans: ['Inter', 'sans-serif'], 
+                        // Poppins for section headings/theme (explicit utility class)
+                        theme: ['Poppins', 'sans-serif'], 
+                        // Dancing Script for large display text/logo
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        // Primary theme color is Neon Green
+                        'theme-neon': '#12d640', 
+                        'theme-dark': '#010410', 
+                        'theme-accent': '#a78bfa', // Purple/Indigo kept as a secondary accent
+                        // These are included from the partial config for safety/consistency
+                        'primary-green': '#047857', 
+                        'highlight-green': '#10B981', 
+                        'detractor-red': '#DC2626', 
+                        'passive-yellow': '#F59E0B', 
+                        'promoter-green': '#059669', 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640; 
+            --purple-accent: #a78bfa; 
+            --glass-bg: rgba(0, 0, 0, 0.75); 
+            --glass-border: rgba(18, 214, 64, 0.4); 
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4); 
+            --neon-glow-text: 0 0 5px rgba(18, 214, 64, 0.8);
+            --neon-glow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #010410; 
+            color: white; 
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Placeholder space background image */
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover; 
+            opacity: 0.1; 
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        /* --- Custom Navigation Link Styles (for neon effect) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: var(--neon-shadow);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neon-green);
+            box-shadow: var(--neon-shadow);
+        }
+        
+        /* --- Custom List Style (Neon Bullet) --- */
+        .styled-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .styled-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--neon-green); /* Neon bullet */
+            text-shadow: 0 0 5px var(--neon-green);
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+        
+        /* Neon Button Base Style */
+        .neon-button {
+            /* Using utility classes for background and text, but adding custom shadow */
+            box-shadow: 0 0 10px rgba(18, 214, 64, 0.5);
+            transition: box-shadow 0.3s, background-color 0.3s;
+        }
+        .neon-button:hover {
+            box-shadow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Close Button for Blog Post (IMPROVED POSITIONING) --- */
+        #close-post-btn {
+            position: fixed; 
+            top: 100px;
+            right: 20px;
+            z-index: 500;
+            font-size: 2.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        #close-post-btn:hover, #close-post-btn:focus {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            outline: none;
+        }
+        @media (min-width: 640px) { 
+            #close-post-btn {
+                top: 100px;
+                right: 40px;
+            }
+        }
+        
+        /* --- Planetary Animation System (kept for theme) --- */
+        .system {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            opacity: 0.2; 
+            pointer-events: none;
+        }
+        .sun {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+        .ear-path, .jup-path {
+            position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear {
+            width: 10px; height: 10px; background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite;
+        }
+        .jup {
+            width: 18px; height: 18px; background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+        
+        /* Sticky Navigation Bar for Report Content */
+        .sticky-nav {
+            position: sticky;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8 bg-theme-dark text-white antialiased">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../../../index.html" class="text-3xl font-extrabold tracking-wider text-white" style="font-family: var(--font-display, 'Dancing Script', cursive); text-decoration: none; text-shadow: 0 0 8px var(--neon-green);">
+                Pansy
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" aria-label="Main Navigation">
+                <a href="../../../index.html" class="nav-link">Home</a>
+                <a href="../../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
+                <a href="../../../Layout/contact.html" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 hidden transition-transform duration-300 ease-in-out" aria-hidden="true">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../../Layout/portfolio.html" class="block py-2 hover:text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../../Layout/story.html" class="block py-2 text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Resume</a></li>
+            <li><a href="../../../Layout/contact.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-6 sm:px-12 pt-28 pb-12" role="main">
+        <article class="relative"> 
+            
+            <a id="close-post-btn" href="../../../Layout/portfolio.html" class="text-white hover:text-[var(--neon-green)] transition duration-300" aria-label="Close Blog Post" title="Back to Portfolio Index"> 
+                <i class="bx bx-x"></i>
+            </a>
+            
+            <div class="max-w-5xl mx-auto">
+
+                <header class="glass-panel shadow-2xl rounded-xl p-8 mb-8 border-t-4 border-[var(--neon-green)]">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-2 font-theme" style="text-shadow: var(--neon-glow-text);">Report: User Information Behaviour & Data Protection Dashboard</h1>
+                    <p class="text-xl text-theme-neon font-semibold mb-4 font-theme" style="text-shadow: var(--neon-glow-text);">Analysis of Privacy Updates and Control Level (Q11 vs. Q12)</p>
+
+                    <div class="flex flex-col sm:flex-row sm:space-x-6 text-sm text-gray-400">
+                        <p>
+                            <span class="font-medium text-white">Author:</span> Pansy Phuong Lam
+                        </p>
+                        <p class="mt-2 sm:mt-0">
+                            <span class="font-medium text-white">Source:</span>
+                            <a href="https://www.doria.fi/bitstream/handle/10024/189268/tran_han.pdf?sequence=3" target="_blank" class="text-theme-neon hover:text-white transition duration-200 report-link break-words">Source PDF</a>
+                        </p>
+                        <p class="mt-2 sm:mt-0">
+                            <span class="font-medium text-white">Dashboard:</span>
+                            <a href="https://public.tableau.com/app/profile/hantran.fi/viz/DataPrivacyQuestionnaireDASHBOARD/OVERVIEW" target="_blank" class="text-theme-neon hover:text-white transition duration-200 report-link break-words">Public Tableau</a>
+                        </p>
+                    </div>
+                </header>
+
+                <nav class="sticky-nav glass-panel p-3 mb-8 shadow-xl rounded-xl border border-[var(--glass-border)]" style="top: 80px;">
+                    <div class="flex flex-wrap gap-3 justify-center">
+                        <a href="#summary" class="neon-button bg-theme-neon hover:bg-theme-neon/80 text-theme-dark font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out text-sm shadow-lg">
+                            Summary
+                        </a>
+                        <a href="#key-findings-table" class="neon-button bg-theme-neon hover:bg-theme-neon/80 text-theme-dark font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out text-sm shadow-lg">
+                            Key Findings
+                        </a>
+                        <a href="#detailed-analysis" class="neon-button bg-theme-neon hover:bg-theme-neon/80 text-theme-dark font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out text-sm shadow-lg">
+                            Update Analysis
+                        </a>
+                        <a href="#conclusion" class="neon-button bg-theme-neon hover:bg-theme-neon/80 text-theme-dark font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out text-sm shadow-lg">
+                            Conclusion
+                        </a>
+                        <a href="#synthesis" class="neon-button bg-theme-neon hover:bg-theme-neon/80 text-theme-dark font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out text-sm shadow-lg">
+                            Root Cause Synthesis
+                        </a>
+                    </div>
+                </nav>
+
+                <section id="summary" class="glass-panel shadow-xl rounded-xl p-6 mb-8 border border-[var(--glass-border)]">
+                    <h2 class="text-2xl font-bold text-white mb-4 border-b-2 border-[var(--neon-green)] pb-2 font-theme">Analysis of Privacy Updates and Control Level (Q11 vs. Q12)</h2>
+                    <p class="leading-relaxed text-gray-300 p-3 bg-black/50 border border-theme-neon/50 rounded-md">
+                        The comparison between the <strong>Frequency of Updates (Q11)</strong> and the <strong>Level of Control (Q12)</strong> shows a correlation between how often users review their privacy settings and the degree of control they feel over their information, though most users still feel only <strong>somewhat in control or neutral</strong> regardless of their update frequency.
+                    </p>
+                </section>
+
+                <section id="key-findings-table" class="glass-panel shadow-xl rounded-xl p-6 mb-8 border border-[var(--glass-border)]">
+                    <h2 class="text-2xl font-bold text-white mb-4 border-b-2 border-[var(--neon-green)] pb-2 flex items-center font-theme">
+                        <span class="text-theme-neon mr-2">📉</span> Key Findings by Control Level
+                    </h2>
+                    <p class="text-sm text-gray-400 mb-4">
+                        The data is based on the platform filter "Facebook/Instagram" for Q12 and the general frequency of updates for Q11.
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-800">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tl-lg">Control Level (Q12)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Total Respondents</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tr-lg">Most Frequent Update Behavior (Q11)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-black/50 divide-y divide-gray-700 text-white">
+                                <tr class="hover:bg-gray-700 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">Somewhat in control</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-neon">46</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 font-semibold">Rarely (Once in a while) - 16 respondents</td>
+                                </tr>
+                                <tr class="hover:bg-gray-700 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">Neutral</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-neon">33</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Rarely (Once in a while) - 8 respondents</td>
+                                </tr>
+                                <tr class="hover:bg-gray-700 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">Not in control at all</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-neon">14</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-detractor-red">Never - 6 respondents</td>
+                                </tr>
+                                <tr class="hover:bg-gray-700 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">Completely in control</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-neon">20</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Rarely (Once in a while) - 6 respondents</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="detailed-analysis" class="glass-panel shadow-xl rounded-xl p-6 mb-8 border border-[var(--glass-border)]">
+                    <h2 class="text-2xl font-bold text-white mb-4 border-b-2 border-[var(--neon-green)] pb-2 flex items-center font-theme">
+                        <span class="text-theme-neon mr-2">🔍</span> Detailed Analysis of Update Frequency
+                    </h2>
+                    <ul class="styled-list space-y-4 text-gray-300">
+                        <li>
+                            <span class="font-bold text-white">Rarely (Once in a while):</span> This group represents the largest number of respondents (36) who update their settings.
+                            <ul class="nested-list ml-6 mt-2 text-gray-400">
+                                <li>The highest proportion of these users felt <strong>Somewhat in control</strong> (16 respondents).</li>
+                                <li>Surprisingly, 6 of those who "Rarely" update still felt <strong>Completely in control </strong>.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-white">Never:</span> The 15 respondents who never update their privacy settings predominantly felt <strong>Somewhat in control </strong> (15 respondents) and <strong>Neutral</strong> (12 respondents).
+                            <ul class="nested-list ml-6 mt-2 text-gray-400">
+                                <li>This group also accounted for the highest number of people who felt <strong>Not in control at all</strong> (6 respondents).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-white">Regularly (Every month):</span> Of the 12 people who update monthly, the most common feeling was <strong>Somewhat in control</strong> (4 respondents) or <strong>Neutral</strong> (4 respondents).
+                        </li>
+                        <li>
+                            <span class="font-bold text-white">Frequently (Every week or more often):</span> The 4 people who update most often were split between feeling <strong>Completely in control</strong> (1 respondent), <strong>Somewhat in control</strong> (2 respondents), and <strong>Neutral</strong> (1 respondent).
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="conclusion" class="glass-panel shadow-xl rounded-xl p-6 mb-8 border border-[var(--glass-border)]">
+                    <h2 class="text-2xl font-bold text-white mb-4 border-b-2 border-[var(--neon-green)] pb-2 flex items-center font-theme">
+                        <span class="text-theme-neon mr-2">💡</span> Conclusion
+                    </h2>
+                    <p class="leading-relaxed text-gray-300 mb-6">
+                        The data suggests that most users, regardless of their update frequency (Q11), do not feel <strong>Completely in control</strong> of their information (Q12).
+                    </p>
+                    <ul class="styled-list space-y-3 text-gray-300">
+                        <li>The most common response for the frequency of updates is <strong>Rarely (Once in a while</strong> and the most common feeling is <strong>Somewhat in control</strong>.</li>
+                        <li>Even those who update frequently do not overwhelmingly feel "Completely in control," indicating a general lack of confidence in platform settings or data usage beyond the user's direct actions.</li>
+                    </ul>
+                </section>
+
+                <section id="synthesis" class="glass-panel shadow-xl rounded-xl p-6 mb-8 border border-[var(--glass-border)]">
+                    <h2 class="text-2xl font-bold text-white mb-4 border-b-2 border-[var(--neon-green)] pb-2 font-theme">Comprehensive Synthesis: Root Cause Analysis and Privacy Control</h2>
+                    <p class="leading-relaxed text-gray-300 mb-6">
+                        The deeper analysis of user behavior confirms and strengthens the findings of the <strong>Root Cause Analysis (RCA).</strong> The central conflict is that individual effort to maintain privacy is rendered futile by powerful, systemic barriers. The user's failure to protect data is not a failure of diligence, but a <strong>failure of efficacy imposed by the digital economy.</strong>
+                    </p>
+                    
+
+                    <h3 class="text-xl font-bold text-theme-neon mb-4 mt-6 font-theme">1. The Futility of Effort: Low Reward for High Diligence</h3>
+                    <p class="leading-relaxed text-gray-300 mb-4">
+                        The comparison between Privacy Update Frequency (Q11) and Level of Control (Q12) demonstrates that user action is largely <strong>decoupled from a genuine sense of security.</strong>
+                    </p>
+
+                    <ul class="styled-list space-y-3 text-gray-300 ml-4">
+                        <li>
+                            <span class="font-bold text-white">The Diligence Paradox:</span> Users who manage their settings "Regularly" (e.g., every month) overwhelmingly report feeling only "Somewhat in control" or "Neutral." Their consistent effort does not translate into high confidence. This suggests the available platform controls are either insufficient, confusing, or too limited to counter the underlying data collection practices.
+                        </li>
+                        <li>
+                            <span class="font-bold text-white">The Rare Action Norm:</span> The vast majority of users who update settings "Rarely" or "Never" form the largest groups that feel "Somewhat in control" or "Not in control at all," reinforcing the view that a lack of effort logically leads to low confidence.
+                        </li>
+                        <li>
+                            <span class="font-bold text-white">The Core Implication:</span> The burden of management is placed on the individual, yet even when the individual acts diligently, the perceived reward is marginal. This points directly to the fact that the <strong>root causes are external</strong> to the user's behavior.
+                        </li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-theme-neon mb-4 mt-8 font-theme">2. Foundational Systemic Root Causes</h3>
+                    <p class="leading-relaxed text-gray-300 mb-4">
+                        The RCA identifies three failures that collectively nullify individual privacy management efforts:
+                    </p>
+
+                    <div class="border-l-4 border-theme-neon/50 pl-4 py-3 mb-4 bg-black/50 rounded-r-md">
+                        <h4 class="text-lg font-semibold text-white flex items-center mb-1"><span class="bg-theme-neon/40 text-theme-neon text-xs font-bold mr-2 px-2 py-0.5 rounded">RCA-A</span> Systemic Constraint (The "No Choice" Mandate)</h4>
+                        <p class="text-sm text-gray-400 italic mb-2">The most powerful barrier is the platform's "take-it-or-leave-it" consent model. Users are not truly consenting; they are coerced.</p>
+                        <ul class="nested-list ml-4 text-sm text-gray-300">
+                            <li><span class="font-semibold text-theme-neon">Evidence:</span> 93 respondents cite feeling they have no choice but to accept policies to access information/services.</li>
+                            <li><span class="font-semibold text-theme-neon">Analysis:</span> Digital platforms operate under a Surveillance Capitalism model, where broad data harvesting is mandatory for service delivery. If basic access is contingent on forfeiting data rights, no amount of adjusting privacy settings later can undo the initial systemic violation of control.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-l-4 border-theme-neon/50 pl-4 py-3 mb-4 bg-black/50 rounded-r-md">
+                        <h4 class="text-lg font-semibold text-white flex items-center mb-1"><span class="bg-theme-neon/40 text-theme-neon text-xs font-bold mr-2 px-2 py-0.5 rounded">RCA-B</span> Cognitive Burden (Complexity and Apathy)</h4>
+                        <p class="text-sm text-gray-400 italic mb-2">Even when control mechanisms exist, they are intentionally designed to fail the average user.</p>
+                        <ul class="nested-list ml-4 text-sm text-gray-300">
+                            <li><span class="font-semibold text-theme-neon">Evidence:</span> 75 respondents report that understanding privacy policies/settings is difficult. This leads to user apathy, as demonstrated by the high percentage who "Never" read policies (37.98%).</li>
+                            <li><span class="font-semibold text-theme-neon">Analysis:</span> This is a governance failure by design. Platform interfaces are opaque, and privacy policies are written in dense legal jargon, creating an insurmountable cognitive burden. The system relies on users being overwhelmed and defaulting to inaction.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-l-4 border-theme-neon/50 pl-4 py-3 bg-black/50 rounded-r-md">
+                        <h4 class="text-lg font-semibold text-white flex items-center mb-1"><span class="bg-theme-neon/40 text-theme-neon text-xs font-bold mr-2 px-2 py-0.5 rounded">RCA-C</span> Governance Failure (Weak Accountability)</h4>
+                        <p class="text-sm text-gray-400 italic mb-2">There is a fundamental regulatory failure that allows these coercive and complex systems to persist.</p>
+                        <ul class="nested-list ml-4 text-sm text-gray-300">
+                            <li><span class="font-semibold text-theme-neon">Evidence:</span> A near-unanimous 88.37% demand stricter regulations and assign primary responsibility to the National Government and Companies. Users believe the government's top role should be enforcing stricter laws and penalties.</li>
+                            <li><span class="font-semibold text-theme-neon">Analysis:</span> Regulatory frameworks and enforcement mechanisms are currently insufficient to counter the power and complexity of global tech companies. The penalties for data misuse are not high enough to act as a meaningful deterrent, creating an environment where companies prioritize profit (data harvesting) over user rights.</li>
+                        </ul>
+                    </div>
+
+                    <p class="p-4 mt-8 bg-theme-neon/20 border-l-4 border-theme-neon text-white italic rounded-md font-semibold" style="text-shadow: var(--neon-glow-text);">
+                        In conclusion, the deeper analysis proves that <strong>self-protection is a myth</strong> under the current paradigm. User behavior is secondary to systemic, structural failures in platform design and regulatory enforcement.
+                    </p>
+                </section>
+            </div>
+            
+            </article>
+    </main>
+
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+
+    <script>
+        document.getElementById('mobile-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
+
+            if (isExpanded) {
+                menu.classList.add('hidden');
+                icon.classList.remove('bx-x');
+                icon.classList.add('bx-menu');
+                this.setAttribute('aria-expanded', 'false');
+            } else {
+                menu.classList.remove('hidden');
+                icon.classList.remove('bx-menu');
+                icon.classList.add('bx-x');
+                this.setAttribute('aria-expanded', 'true');
+            }
+        });
+        
+        // Close mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(item => {
+            item.addEventListener('click', () => {
+                const menu = document.getElementById('mobile-menu');
+                const toggle = document.getElementById('mobile-toggle');
+                const icon = toggle.querySelector('i');
+
+                menu.classList.add('hidden');
+                icon.classList.remove('bx-x');
+                icon.classList.add('bx-menu');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+</body>
+</html>

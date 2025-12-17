@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational Performance & Impact Analysis Report (Neon Theme)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Inter for body/report text (sans-serif default)
+                        sans: ['Inter', 'sans-serif'],
+                        // Poppins for section headings/theme (explicit utility class)
+                        theme: ['Poppins', 'sans-serif'],
+                        // Dancing Script for large display text/logo
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        // Primary theme color is Neon Green
+                        'theme-neon': '#12d640',
+                        'theme-dark': '#010410',
+                        'theme-accent': '#a78bfa', // Purple/Indigo kept as a secondary accent
+                        // These are included from the partial config for safety/consistency
+                        'primary-green': '#047857',
+                        'highlight-green': '#10B981',
+                        'detractor-red': '#DC2626',
+                        'passive-yellow': '#F59E0B',
+                        'promoter-green': '#059669',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640;
+            --purple-accent: #a78bfa;
+            --glass-bg: rgba(0, 0, 0, 0.75);
+            --glass-border: rgba(18, 214, 64, 0.4);          
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4);
+            --neon-glow-text: 0 0 5px rgba(18, 214, 64, 0.8);
+            --neon-glow: 0 0 20px rgba(18, 214, 64, 1);
+            
+            /* Report Variables (Kept for internal component styling) */
+            --primary-green-report: #047857;
+            --highlight-green-report: #10B981;
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #010410;
+            color: white;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Placeholder space background image */
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover;
+            opacity: 0.1;
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling & Header Scroll Effect --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+            /* Add transition for scroll effect */
+            transition: height 0.3s ease, padding 0.3s ease, background 0.3s ease;
+        }
+
+        /* Scroll effect applied via JS */
+        .header-scrolled {
+            height: 60px !important;
+            background: rgba(0, 0, 0, 0.95) !important; /* Slightly darker when scrolled */
+            box-shadow: 0 4px 20px rgba(18, 214, 64, 0.3);
+        }
+
+        /* --- Custom Navigation Link Styles (IMPROVED NEON EFFECT) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0.5rem; /* Added horizontal padding for hover area */
+            margin: 0 0.1rem; /* Added margin to separate links slightly */
+            text-decoration: none;
+            border-radius: 0.25rem; /* Soft round corners */
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out, background 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: var(--neon-glow-text);
+            /* NEW: Subtle glow background/border on hover/active */
+            background-color: rgba(18, 214, 64, 0.05);
+            box-shadow: 0 0 5px rgba(18, 214, 64, 0.3);
+        }
+
+        .nav-link.active {
+            box-shadow: var(--strong-neon-shadow); /* Applied strong shadow directly for active state */
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            /* Adjusted left/width for the new padding */
+            left: 0.5rem;
+            width: calc(100% - 1rem);
+            height: 2px;
+            background-color: var(--neon-green);
+            /* IMPROVED: Used the stronger shadow variable */
+            box-shadow: var(--strong-neon-shadow);
+            border-radius: 1px;
+        }
+        
+        /* --- Close Button for Blog Post (IMPROVED POSITIONING) --- */
+        #close-post-btn {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 500;
+            font-size: 2.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        #close-post-btn:hover, #close-post-btn:focus {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            outline: none;
+        }
+        @media (min-width: 640px) {
+            #close-post-btn {
+                top: 100px;
+                right: 40px;
+            }
+        }
+
+        /* --- Mobile Menu Improvements --- */
+        #mobile-menu {
+            /* Initial state: off-screen and invisible */
+            transform: translateX(100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s;
+        }
+
+        #mobile-menu.is-open {
+            /* Target state: visible and on-screen */
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* --- Planetary Animation System (kept for theme) --- */
+        .system {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+        .sun {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+        .ear-path, .jup-path {
+            position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear {
+            width: 10px; height: 10px; background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite;
+        }
+        .jup {
+            width: 18px; height: 18px; background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+        
+        /* ====================================================================== */
+        /* --- REPORT STYLES MODIFIED FOR NEON THEME INTEGRATION --- */
+        /* ====================================================================== */
+
+        /* Header (Moved inside the main glass-panel container for better integration) */
+        .report-header {
+            background-color: var(--purple-accent); /* Changed header color for this report */
+            color: #010410;
+            text-align: center;
+            padding: 25px 20px;
+            border-radius: 0.5rem 0.5rem 0 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        .report-header h1 { font-size: 2.2em; }
+        .report-header p { margin: 5px 0; opacity: 0.9; }
+
+        /* General Report Content Styles - Adapting to Dark Theme */
+        .report-content {
+            color: #e5e7eb; /* Light gray text for dark background */
+        }
+        .report-content h2, .report-content h3 {
+            color: var(--neon-green); /* Use neon green for headings */
+            text-shadow: 0 0 5px rgba(18, 214, 64, 0.4);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Executive Summary & Tableau Section - Dark Theme Adaptation */
+        .executive-summary, .tableau-button-section {
+            background-color: rgba(1, 4, 16, 0.7); /* Darker background tint */
+            border-left: 4px solid var(--purple-accent); /* Changed summary border color */
+            padding: 20px;
+            border-radius: 0.5rem;
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.2); /* Changed summary shadow */
+        }
+
+        /* Table */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0,0,0,0.5); /* Dark table background */
+            color: #e5e7eb;
+        }
+        .report-table th, .report-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Lighter border */
+        }
+        .report-table th {
+            background-color: rgba(167, 139, 250, 0.1); /* Purple-tinted header */
+            color: var(--purple-accent);
+            font-weight: 600;
+        }
+        .report-table tr:nth-child(even) {
+            background-color: rgba(0,0,0,0.3); /* Slightly different row color */
+        }
+        .report-table tr:hover {
+            background-color: rgba(167, 139, 250, 0.05); /* Purple hover */
+        }
+
+        /* Collapsible root cause sections - Dark Theme Adaptation */
+        .collapsible {
+            background-color: rgba(1, 4, 16, 0.7); /* Darker background */
+            color: #e5e7eb;
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: 1px solid var(--purple-accent); /* Changed collapsible border color */
+            border-radius: 0.5rem;
+            text-align: left;
+            outline: none;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+        .active, .collapsible:hover {
+            background-color: var(--purple-accent); /* Changed collapsible active color */
+            color: #010410;
+            border-color: var(--purple-accent);
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.5); /* Changed collapsible active shadow */
+        }
+        .content {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+            background-color: rgba(1, 4, 16, 0.5);
+            border-left: 4px solid var(--purple-accent); /* Changed content border color */
+            border-radius: 0 0 5px 5px;
+            margin-bottom: 20px;
+            color: #c0c0c0; /* Muted text inside content */
+        }
+        .content p { padding: 10px 0; }
+        .content ul { padding-bottom: 10px; }
+        
+        /* Key Insights List */
+        .report-content .styled-list-report li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .report-content .styled-list-report li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--neon-green); /* Changed bullet color */
+            text-shadow: 0 0 3px var(--neon-green);
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8 bg-theme-dark text-white antialiased">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../../../index.html" class="text-3xl font-extrabold tracking-wider text-white" style="font-family: var(--font-display, 'Dancing Script', cursive); text-decoration: none; text-shadow: 0 0 8px var(--neon-green);">
+                Pansy
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-4 font-medium" aria-label="Main Navigation">
+                <a href="../../../index.html" class="nav-link">Home</a>
+                <a href="../../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link flex items-center space-x-1">
+                    <span>Resume</span>
+                    <i class='bx bxs-download text-sm'></i>
+                </a>
+                <a href="../../../Layout/contact.html" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bx bx-menu" id="mobile-icon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 transition-all duration-300 ease-in-out" aria-hidden="true">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../../Layout/portfolio.html" class="block py-2 text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../../Layout/story.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link flex items-center justify-center space-x-2" role="menuitem">
+                <span>Resume</span>
+                <i class='bx bxs-download'></i>
+            </a></li>
+            <li><a href="../../../Layout/contact.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-6 sm:px-12 pt-28 pb-12" role="main">
+        <article class="relative glass-panel rounded-lg shadow-2xl p-6 sm:p-10 border-2 border-[var(--neon-green)]/30 report-content"> 
+            
+            <a id="close-post-btn" href="../../../Layout/portfolio.html" class="text-white hover:text-[var(--neon-green)] transition duration-300" aria-label="Close Blog Post" title="Back to Portfolio Index"> 
+                <i class="bx bx-x"></i>
+            </a>
+
+            <div class="report-header">
+                <h1 class="font-theme">Operational Performance & Impact Analysis Report</h1>
+                <p>Fleet & Warehouse Optimization Using Telematics Data</p>
+                <p><em>By: Pansy Phuong Lam</em></p>
+            </div>
+
+            <div class="container mx-auto px-0">
+
+                <section class="executive-summary">
+                    <h2 class="font-theme text-2xl font-semibold mb-3">Executive Summary</h2>
+                    <p>This case study analyzes over <span  class="font-semibold" style="color: rgb(238, 147, 240);">550,000 telematics records</span> from forklift and truck fleets across two major clients. Insights reveal safety risks, operational inefficiencies, driver behavior patterns, and equipment misuse. The findings highlight opportunities for <span class="font-semibold" style="color: rgb(238, 147, 240);">fleet optimization, reduced maintenance costs, improved battery and equipment health, enhanced worker safety, and increased operational efficiency.</span></p>
+                </section>
+
+                <div class="mb-8">
+                    <p class="mt-2 sm:mt-0">
+                        <a class="px-5 py-2 font-bold text-[var(--neon-green)] bg-transparent border-2 border-[var(--neon-green)] rounded-lg shadow-sm transition duration-300 hover:bg-[rgba(18,214,64,0.1)] hover:shadow-[0_0_10px_rgba(18,214,64,0.5)]"
+                        href="https://public.tableau.com/app/profile/hantran.fi/viz/HANTRANFINAL/Home"
+                        target="_blank" rel="noopener noreferrer">
+                        <i class="bx bx-link-external mr-2"></i> View on Tableau Public
+                    </a>
+                    </p>
+                </div>
+                
+                <section>
+                    <h2 class="font-theme text-2xl font-semibold mb-3">Background</h2>
+                    <p>A large industrial client manages <span  class="font-semibold" style="color: rgb(238, 147, 240);">1,066 forklifts and 392 trucks</span>. Telematics data includes shock events, utilization logs, driver behavior, battery usage, spatial coordinates, and shipment operations. Rising maintenance expenses and safety concerns prompted a full analysis to identify root causes and propose data-driven improvements.</p>
+                </section>
+
+                <section class="mt-8">
+                    <h2 class="font-theme text-2xl font-semibold mb-3">📊 Summary Table: Telematics Findings</h2>
+                    <div class="table-responsive">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Cause</th>
+                                    <th>Evidence</th>
+                                    <th>Impact</th>
+                                    <th>Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Facility layout inefficiencies</td>
+                                    <td>Shock hotspots at specific coordinates (e.g., X=22, Y=33; X=14, Y=48)</td>
+                                    <td>Repeated collisions, higher maintenance costs</td>
+                                    <td>Redesign warehouse layout and pilot changes in hotspot zones</td>
+                                </tr>
+                                <tr>
+                                    <td>Driver behavior at low speeds</td>
+                                    <td>High shock counts even at 0–4 km/h</td>
+                                    <td>Safety risks, product damage</td>
+                                    <td>Introduce visibility aids, driver training, monitor reduction in low-speed shocks</td>
+                                </tr>
+                                <tr>
+                                    <td>Poor authentication / machine misuse</td>
+                                    <td>Multi-day login/logout intervals in forklift logs</td>
+                                    <td>Inflated utilization metrics, inaccurate reporting</td>
+                                    <td>Enforce stricter telematics login/logout protocols with driver ID cards</td>
+                                </tr>
+                                <tr>
+                                    <td>Irregular battery charging</td>
+                                    <td>Battery logs show inconsistent charging cycles</td>
+                                    <td>Premature battery wear, increased replacement costs</td>
+                                    <td>Implement scheduled charging protocols and track battery lifespan improvements</td>
+                                </tr>
+                                <tr>
+                                    <td>Route conditions & driver variability</td>
+                                    <td>Certain trucks (e.g., ID 91631582) show >2,700 shocks</td>
+                                    <td>Uneven performance, higher supply chain risk</td>
+                                    <td>Map shock intensity by route, adjust scheduling, provide driver feedback/training</td>
+                                </tr>
+                                <tr>
+                                    <td>Seasonal workload peaks</td>
+                                    <td>Shock counts spike July–August 2020</td>
+                                    <td>Fatigue, higher accident risk during peak demand</td>
+                                    <td>Adjust staffing and shift planning during seasonal peaks</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="mt-8">
+                    <h2 class="font-theme text-2xl font-semibold mb-3">Root Cause Analysis (5 Whys Summary)</h2>
+
+                    <button class="collapsible">1. Facility Layout Constraints</button>
+                    <div class="content">
+                        <p class="font-semibold text-white">Problem: Frequent shock hotspots in narrow aisles and blind spots.</p>
+                        <p class="font-medium text-white">Root Cause: Outdated facility layout not aligned with current traffic volumes.</p>
+                        <ul class="styled-list-report">
+                            <li>Growth in operations increased traffic density but layout remained unchanged.</li>
+                            <li>No periodic layout reassessment or safety audits.</li>
+                        </ul>
+                    </div>
+
+                    <button class="collapsible">2. Driver Behavior & Fatigue</button>
+                    <div class="content">
+                        <p class="font-semibold text-white">Problem: High shocks during July–August.</p>
+                        <p class="font-medium text-white">Root Cause: Fatigue from insufficient staffing during high-demand periods.</p>
+                        <ul class="styled-list-report">
+                            <li>Overtime and peak-season demand leading to fatigue.</li>
+                            <li>No dynamic workforce planning model.</li>
+                        </ul>
+                    </div>
+
+                    <button class="collapsible">3. Incorrect Machine Utilization Data</button>
+                    <div class="content">
+                        <p class="font-semibold text-white">Problem: Multi-day login sessions.</p>
+                        <p class="font-medium text-white">Root Cause: Manual login/logout system with no automation or enforcement.</p>
+                        <ul class="styled-list-report">
+                            <li>Manual logout relies on driver discipline, operators forget to log out.</li>
+                            <li>Telemetry policies have not been updated for automated authentication.</li>
+                        </ul>
+                    </div>
+
+                    <button class="collapsible">4. Route-Level Shock Variability</button>
+                    <div class="content">
+                        <p class="font-semibold text-white">Problem: Some routes show extremely high shock levels.</p>
+                        <p class="font-medium text-white">Root Cause: No standardized routing strategy or real-time GPS route control.</p>
+                        <ul class="styled-list-report">
+                            <li>Road conditions vary and logistics partners use inconsistent paths.</li>
+                            <li>Fleet lacks unified GPS routing enforcement.</li>
+                        </ul>
+                    </div>
+
+                    <button class="collapsible">5. Battery Degradation Issues</button>
+                    <div class="content">
+                        <p class="font-semibold text-white">Problem: Inconsistent battery health across fleet.</p>
+                        <p class="font-medium text-white">Root Cause: No consistent or enforced battery charging policy.</p>
+                        <ul class="styled-list-report">
+                            <li>Operators follow different charging habits; lack of training and monitoring dashboards.</li>
+                            <li>Battery lifecycle management process is not established.</li>
+                        </ul>
+                    </div>
+
+                    <button class="collapsible">6. Equipment Overuse & Misallocation</button>
+                    <div class="content">
+                        <p class="font-semibold text-white">Problem: Certain machines suffer more wear and damage.</p>
+                        <p class="font-medium text-white">Root Cause: Manual fleet allocation causing uneven equipment distribution.</p>
+                        <ul class="styled-list-report">
+                            <li>Shift leaders assign machines unevenly; planning relies on manual decision-making.</li>
+                            <li>Fleet management lacks optimized utilization rules.</li>
+                        </ul>
+                    </div>
+
+                    <button class="collapsible">7. Sensor Calibration Errors</button>
+                    <div class="content">
+                        <p class="font-semibold text-white">Problem: Anomalous shock spikes.</p>
+                        <p class="font-medium text-white">Root Cause: Lack of preventive calibration management for telemetry sensors.</p>
+                        <ul class="styled-list-report">
+                            <li>Calibration is irregular; maintenance team reacts only when issues appear.</li>
+                            <li>Preventive telemetry maintenance process is missing.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="mt-8">
+                    <h2 class="font-theme text-2xl font-semibold mb-3">Key Insights</h2>
+                    <ul class="styled-list-report">
+                        <li><span class="font-semibold" style="color: rgb(253, 76, 215);">High Impact Frequency:</span> Forklifts recorded <span class="font-semibold text-theme-neon">86,801</span> high shocks; trucks recorded <span class="font-semibold text-theme-neon">5,517</span> high shocks.</li>
+                        <li><span class="font-semibold" style="color: rgb(253, 76, 215);">Facility Layout Issues:</span> Shock clusters concentrated in <span class="font-semibold text-theme-neon">narrow corners, intersections, and blind spots.</span></li>
+                        <li><span class="font-semibold" style="color: rgb(253, 76, 215);">Irregular Machine Utilization:</span> Multi-day sessions without logout causing <span class="font-semibold text-theme-neon">inaccurate data.</span></li>
+                        <li><span class="font-semibold" style="color: rgb(253, 76, 215);">Driver Behavior Patterns:</span> Most shocks occurred at <span class="font-semibold text-theme-neon">0–4 km/h.</span></li>
+                        <li><span class="font-semibold" style="color: rgb(253, 76, 215);">Battery Charging Problems:</span> Irregular charging cycles contributed to <span class="font-semibold text-theme-neon">premature battery wear.</span></li>
+                        <li><span class="font-semibold" style="color: rgb(253, 76, 215);">Route-Level Shock Variability:</span> Certain trucks had <span class="font-semibold text-theme-neon">3–5× more shocks</span> on specific routes.</li>
+                        <li><span class="font-semibold" style="color: rgb(253, 76, 215);">Seasonal Fatigue:</span> Shock levels peaked in <span class="font-semibold text-theme-neon">July–August</span> during high workload periods.</li>
+                    </ul>
+                </section>
+
+            </div>
+            <script>
+            // Collapsible sections script
+            var coll = document.getElementsByClassName("collapsible");
+            for (let i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight){
+                  content.style.maxHeight = null;
+                } else {
+                  content.style.maxHeight = content.scrollHeight + 15 + "px"; // Added 15px for padding/gap
+                } 
+              });
+            }
+            </script>
+        </article>
+    </main>
+
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+    
+    <script>
+        // --- Header Scroll Shrink Effect ---
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+        });
+
+        // --- Mobile menu toggle logic with smooth transition ---
+        document.getElementById('mobile-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-icon');
+            const isMenuOpen = menu.classList.contains('is-open');
+
+            this.setAttribute('aria-expanded', !isMenuOpen);
+            menu.classList.toggle('is-open');
+
+            // Toggle icon from menu (burger) to close (X)
+            if (isMenuOpen) {
+                icon.classList.remove('bx-x');
+                icon.classList.add('bx-menu');
+            } else {
+                icon.classList.remove('bx-menu');
+                icon.classList.add('bx-x');
+            }
+        });
+        
+        // Hide mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(item => {
+            item.addEventListener('click', () => {
+                const menu = document.getElementById('mobile-menu');
+                const toggleButton = document.getElementById('mobile-toggle');
+                const icon = document.getElementById('mobile-icon');
+
+                menu.classList.remove('is-open');
+                toggleButton.setAttribute('aria-expanded', 'false');
+                icon.classList.remove('bx-x');
+                icon.classList.add('bx-menu');
+            });
+        });
+    </script>
+
+</body>
+</html>

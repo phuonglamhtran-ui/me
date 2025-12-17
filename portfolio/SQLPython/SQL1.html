@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Report: SQL Assignment Portfolio (Neon Theme)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        // --- Tailwind Configuration ---
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'], 
+                        theme: ['Poppins', 'sans-serif'], 
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        'theme-neon': '#12d640', // Neon Green
+                        'theme-dark': '#010410', // Deep Black/Blue
+                        'theme-accent': '#a78bfa', // Purple/Indigo accent
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640; 
+            --purple-accent: #a78bfa; 
+            --glass-bg: rgba(0, 0, 0, 0.85);
+            --glass-border: rgba(18, 214, 64, 0.4); 
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4); 
+            --neon-glow-text: 0 0 5px rgba(18, 214, 64, 0.8);
+            --neon-glow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--theme-dark, #010410); /* Use variable for consistency if possible */
+            color: white; 
+            margin: 0;
+            min-height: 100vh;
+            padding-top: 80px; /* Added padding to account for fixed header */
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover; 
+            opacity: 0.1;
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling (Used for Header) --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        /* --- Neon Heading Utility (Text Shadow) --- */
+        .neon-heading-glow {
+            text-shadow: var(--neon-glow-text);
+        }
+
+        /* --- Custom Navigation Link Styles (for neon effect) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: var(--neon-shadow); 
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neon-green);
+            box-shadow: var(--neon-shadow);
+        }
+        
+        /* --- Planetary Animation System (kept for theme) --- */
+        .system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; pointer-events: none; }
+        .sun { position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00; transform: translate(-50%, -50%); }
+        .ear-path, .jup-path { position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 50%; transform: translate(-50%, -50%); }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear { width: 10px; height: 10px; background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite; }
+        .jup { width: 18px; height: 18px; background: #4a5568; animation: orbit-jup 50s linear infinite; }
+        @keyframes orbit-ear { from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); } }
+        @keyframes orbit-jup { from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); } }
+        
+        /* --- Custom Styles for Assignment Cards --- */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem; /* Rounded corners */
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--neon-shadow); /* Subtle neon card glow */
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Styling for the <details>/<summary> elements */
+        .card details {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(18, 214, 64, 0.05); /* Lighter tint */
+            border: 1px solid var(--glass-border);
+            border-radius: 0.5rem;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        .card summary {
+            cursor: pointer;
+            list-style: none; /* Hide default triangle */
+            color: var(--neon-green);
+            text-shadow: 0 0 3px var(--neon-green);
+            font-weight: 600;
+            line-height: 1.5;
+            display: block;
+        }
+        /* Custom marker for details summary */
+        .card summary::before {
+            content: "▶"; /* Modern indicator */
+            display: inline-block;
+            margin-right: 0.75rem;
+            transition: transform 0.3s ease;
+            color: var(--neon-green);
+            font-size: 0.8rem;
+        }
+        .card details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        
+        /* Style for the code block inside details */
+        .card pre {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #0d0d0d; /* Darker background for code */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.25rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #f8f8f2;
+        }
+        /* Style for inner headers (Q5 methods) */
+        .inner-header {
+            margin: 1.5rem 0 0.5rem;
+            color: var(--purple-accent);
+            font-weight: 600;
+            font-size: 1.125rem; /* text-lg */
+        }
+        /* Style for copy button (using Tailwind classes where possible, but preserving custom class) */
+        .neon-button {
+            /* Tailwind classes: bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300 */
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(18, 214, 64, 0.6); /* Additional neon effect on button */
+        }
+        .neon-button:hover {
+            box-shadow: 0 0 15px rgba(18, 214, 64, 1);
+        }
+        /* ====================================================================== */
+        /* --- BACK TO TOP BUTTON STYLING (NEW) --- */
+        /* ====================================================================== */
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            text-align: center;
+            background: var(--neon-green);
+            color: var(--theme-dark);
+            border: none; /* Ensure no border from Tailwind/base styling */
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--neon-green), 0 0 5px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            cursor: pointer;
+        }
+
+        #back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #back-to-top:hover {
+            background: #10c038; /* Slightly darker neon on hover */
+            box-shadow: 0 0 20px var(--neon-green), 0 0 10px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+
+<body class="bg-theme-dark text-white antialiased">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../index.html" class="text-3xl font-bold tracking-wide text-white" style="font-family: 'Dancing Script', cursive; text-decoration: none; text-shadow: 0 0 5px var(--neon-green);">
+                Pansy
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" aria-label="Main Navigation">
+                <a href="../../index.html" class="nav-link">Home</a>
+                <a href="../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
+                <a href="../../Layout/contact.html" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-neon)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i id="mobile-icon" class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 hidden transition-transform duration-300 ease-in-out">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../Layout/portfolio.html" class="block py-2 hover:text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../Layout/story.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Resume</a></li>
+            <li><a href="../../Layout/contact.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 sm:px-12 pt-0 pb-12" role="main">
+        <article class="relative"> 
+            
+            <div class="flex items-center space-x-4 mb-8"> 
+                <a id="close-post-btn" href="../../Layout/portfolio.html" class="text-white hover:text-[var(--neon-green)] transition duration-300 absolute top-0 -left-12 hidden lg:block" aria-label="Back to Portfolio Index" title="Back to Portfolio Index"> 
+                    <i class="bx bx-left-arrow-alt text-4xl"></i>
+                </a>
+                <div class="flex-shrink-0 w-12 h-12 bg-theme-accent text-white rounded-full flex items-center justify-center font-bold text-xl">HT</div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-theme font-bold text-theme-neon neon-heading-glow">SQL Assignment Portfolio</h1>
+                    <div class="text-sm text-gray-400 mt-1">Created by <strong class="text-white">Pansy Phuong Lam</strong></div>
+                </div>
+            </div>
+            <section class="card" id="summary" aria-labelledby="summary-heading">
+                <div class="section-header">
+                    <h2 id="summary-heading" class="text-2xl font-theme font-semibold text-theme-neon neon-heading-glow">Assignment Overview</h2>
+                    <div class="controls flex space-x-2">
+                    </div>
+                </div>
+                <p class="text-gray-200">Below are the final, corrected SQL solutions for Questions 1–8 from your MySQL assignment. Each section includes the problem statement and the final query. Use the copy buttons to quickly copy a query to your clipboard.</p>
+            </section>
+
+            <section class="card" id="q1" aria-labelledby="q1-heading">
+                <div class="section-header">
+                    <h2 id="q1-heading" class="text-xl font-theme font-semibold">Question 1</h2>
+                    <div class="controls">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q1" onclick="copyCode(event)">Copy</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Fetch product_name, list_price, date_added for products with list_price > 500 and < 2000. Sort by date_added DESC.</p>
+                
+                <details class="mt-4">
+                    <summary>Show / Hide Answer</summary>
+                    <pre><code id="code-q1">SELECT 
+    product_name AS 'The product_name',
+    list_price AS 'The list_price',
+    date_added AS 'The date_added'
+FROM
+    products
+WHERE
+    list_price > 500
+    AND list_price < 2000
+ORDER BY 
+    date_added DESC;</code></pre>
+                </details>
+            </section>
+
+            <section class="card" id="q2" aria-labelledby="q2-heading">
+                <div class="section-header">
+                    <h2 id="q2-heading" class="text-xl font-theme font-semibold">Question 2</h2>
+                    <div class="controls">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q2" onclick="copyCode(event)">Copy</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Return item_id, item_price, discount_amount, quantity and calculated totals. Only rows where item_total > 500. Sorted by item_total DESC.</p>
+                <details class="mt-4">
+                    <summary>Show / Hide Answer</summary>
+                    <pre><code id="code-q2">SELECT 
+    item_id AS 'The item id',
+    item_price AS 'The item price',
+    discount_amount AS 'The discount amount',
+    quantity AS 'The quantity',
+    (item_price * quantity) AS 'The price total',
+    (discount_amount * quantity) AS 'The discount_total',
+    ((item_price - discount_amount) * quantity) AS 'The item total'
+FROM
+    order_items
+WHERE
+    ((item_price - discount_amount) * quantity) > 500
+ORDER BY 
+    ((item_price - discount_amount) * quantity) DESC;</code></pre>
+                </details>
+            </section>
+
+            <section class="card" id="q3" aria-labelledby="q3-heading">
+                <div class="section-header">
+                    <h2 id="q3-heading" class="text-xl font-theme font-semibold">Question 3</h2>
+                    <div class="controls">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q3" onclick="copyCode(event)">Copy</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Inner join categories to products and return category_name, product_name, list_price. Sort by category_name then product_name asc.</p>
+                <details class="mt-4">
+                    <summary>Show / Hide Answer</summary>
+                    <pre><code id="code-q3">SELECT 
+    c.category_name,
+    p.product_name,
+    p.list_price
+FROM 
+    products p
+INNER JOIN 
+    categories c 
+        ON p.category_id = c.category_id
+ORDER BY 
+    c.category_name ASC,
+    p.product_name ASC;</code></pre>
+                </details>
+            </section>
+
+            <section class="card" id="q4" aria-labelledby="q4-heading">
+                <div class="section-header">
+                    <h2 id="q4-heading" class="text-xl font-theme font-semibold">Question 4</h2>
+                    <div class="controls">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q4" onclick="copyCode(event)">Copy</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Find products that share the same list_price. Return product_id, product_name, list_price.</p>
+                <details class="mt-4">
+                    <summary>Show / Hide Answer</summary>
+                    <pre><code id="code-q4">SELECT 
+    p1.product_id,
+    p1.product_name,
+    p1.list_price
+FROM 
+    products p1
+INNER JOIN 
+    products p2 
+        ON p1.list_price = p2.list_price
+        AND p1.product_id &lt;&gt; p2.product_id
+ORDER BY 
+    p1.list_price DESC, 
+    p1.product_id;</code></pre>
+                </details>
+            </section>
+
+            <section class="card" id="q5" aria-labelledby="q5-heading">
+                <div class="section-header">
+                    <h2 id="q5-heading" class="text-xl font-theme font-semibold">Question 5</h2>
+                    <div class="controls flex space-x-2">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q5a" onclick="copyCode(event)">Copy M1</button>
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q5b" onclick="copyCode(event)">Copy M2</button>
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q5c" onclick="copyCode(event)">Copy M3</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Identify categories that do NOT match any product. Three methods provided: LEFT JOIN, NOT IN, NOT EXISTS.</p>
+
+                <h4 class="inner-header">Method 1 — LEFT JOIN</h4>
+                <details>
+                    <summary>Show / Hide Answer (Method 1)</summary>
+                    <pre><code id="code-q5a">SELECT 
+    c.category_name
+FROM 
+    categories c
+LEFT JOIN 
+    products p 
+        ON c.category_id = p.category_id
+WHERE 
+    p.category_id IS NULL;</code></pre>
+                </details>
+
+                <h4 class="inner-header">Method 2 — NOT IN</h4>
+                <details>
+                    <summary>Show / Hide Answer (Method 2)</summary>
+                    <pre><code id="code-q5b">SELECT 
+    category_name
+FROM 
+    categories
+WHERE 
+    category_id NOT IN (
+        SELECT DISTINCT category_id
+        FROM products
+        WHERE category_id IS NOT NULL
+    );</code></pre>
+                </details>
+
+                <h4 class="inner-header">Method 3 — NOT EXISTS</h4>
+                <details>
+                    <summary>Show / Hide Answer (Method 3)</summary>
+                    <pre><code id="code-q5c">SELECT 
+    c.category_name
+FROM 
+    categories c
+WHERE 
+    NOT EXISTS (
+        SELECT 1
+        FROM products p
+        WHERE c.category_id = p.category_id
+    );</code></pre>
+                </details>
+            </section>
+
+            <section class="card" id="q6" aria-labelledby="q6-heading">
+                <div class="section-header">
+                    <h2 id="q6-heading" class="text-xl font-theme font-semibold">Question 6</h2>
+                    <div class="controls">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q6" onclick="copyCode(event)">Copy</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Return one row per category that has products: category_name, number of products, maximum list_price. Sort by product count desc.</p>
+                <details class="mt-4">
+                    <summary>Show / Hide Answer</summary>
+                    <pre><code id="code-q6">SELECT 
+    c.category_name,
+    COUNT(p.product_id) AS product_count,
+    MAX(p.list_price) AS max_list_price
+FROM 
+    categories c
+INNER JOIN 
+    products p 
+        ON c.category_id = p.category_id
+GROUP BY 
+    c.category_name
+ORDER BY 
+    product_count DESC;</code></pre>
+                </details>
+            </section>
+
+            <section class="card" id="q7" aria-labelledby="q7-heading">
+                <div class="section-header">
+                    <h2 id="q7-heading" class="text-xl font-theme font-semibold">Question 7</h2>
+                    <div class="controls">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q7" onclick="copyCode(event)">Copy</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Products whose list_price is greater than the average list_price. Return product_name and list_price, sorted desc.</p>
+                <details class="mt-4">
+                    <summary>Show / Hide Answer</summary>
+                    <pre><code id="code-q7">SELECT 
+    product_name, 
+    list_price
+FROM 
+    products
+WHERE 
+    list_price &gt; (SELECT AVG(list_price) FROM products)
+ORDER BY 
+    list_price DESC;</code></pre>
+                </details>
+            </section>
+
+            <section class="card" id="q8" aria-labelledby="q8-heading">
+                <div class="section-header">
+                    <h2 id="q8-heading" class="text-xl font-theme font-semibold">Question 8</h2>
+                    <div class="controls">
+                        <button class="neon-button bg-theme-neon text-theme-dark font-semibold py-2 px-4 rounded-lg text-sm transition duration-300" data-target="code-q8" onclick="copyCode(event)">Copy</button>
+                    </div>
+                </div>
+                <p class="desc text-gray-300">Return product_name and discount_percent for products that have a unique discount_percent. Sort by product_name asc.</p>
+                <details class="mt-4">
+                    <summary>Show / Hide Answer</summary>
+                    <pre><code id="code-q8">SELECT 
+    product_name, 
+    discount_percent
+FROM
+    products
+WHERE
+    discount_percent NOT IN (
+        SELECT 
+            discount_percent
+        FROM
+            products
+        GROUP BY 
+            discount_percent
+        HAVING 
+            COUNT(discount_percent) &gt; 1
+    )
+ORDER BY 
+    product_name ASC;</code></pre>
+                </details>
+            </section>
+        
+        </article> 
+
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+    </main>
+
+    <button id="back-to-top" aria-label="Back to Top" title="Back to Top">
+        <i class='bx bx-up-arrow-alt text-2xl'></i>
+    </button>
+    
+    <script>
+        /**
+         * Copy Code Function 
+         */
+        function copyCode(e){
+            const btn = e.currentTarget;
+            const target = btn.getAttribute('data-target');
+            // Support multi-target copy for Q5
+            const targets = target.split(','); 
+            let fullText = '';
+            
+            targets.forEach(t => {
+                const el = document.getElementById(t.trim());
+                if(el) {
+                    // Extract text content from the code block, preserving formatting
+                    fullText += el.textContent.trim() + '\n\n'; 
+                }
+            });
+
+            if(fullText.length === 0) return;
+            
+            // Trim trailing newlines
+            fullText = fullText.trim(); 
+            
+            navigator.clipboard.writeText(fullText).then(()=>{
+                const orig = btn.innerText;
+                btn.innerText = 'Copied!';
+                setTimeout(()=> btn.innerText = orig, 1200);
+            }).catch(()=>{
+                alert('Copy failed — select and copy manually.');
+            });
+        }
+        
+        /**
+         * Mobile menu toggle logic (FIXED)
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('mobile-toggle');
+            const menu = document.getElementById('mobile-menu');
+            const mobileIcon = document.getElementById('mobile-icon'); // Now correctly referenced by ID
+            
+            if (toggleButton && menu && mobileIcon) {
+                
+                // Function to open/close the menu
+                function toggleMobileMenu(forceClose) {
+                    const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+                    const newState = forceClose === true ? false : !isExpanded;
+
+                    toggleButton.setAttribute('aria-expanded', newState);
+                    
+                    if (newState) {
+                        menu.classList.remove('hidden');
+                        mobileIcon.classList.remove('bx-menu');
+                        mobileIcon.classList.add('bx-x');
+                    } else {
+                        menu.classList.add('hidden');
+                        mobileIcon.classList.remove('bx-x');
+                        mobileIcon.classList.add('bx-menu');
+                    }
+                }
+
+                // Listener for the main header toggle button (hamburger/X)
+                toggleButton.addEventListener('click', function() {
+                    toggleMobileMenu();
+                });
+                
+                // Hide mobile menu when a navigation link is clicked
+                document.querySelectorAll('#mobile-menu a').forEach(item => {
+                    item.addEventListener('click', () => {
+                        // Delay closing slightly for visual effect
+                        setTimeout(() => toggleMobileMenu(true), 100); 
+                    });
+                });
+                
+                // Optional: Close menu on window resize if it transitions to desktop view
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth >= 1024 && !menu.classList.contains('hidden')) { 
+                        toggleMobileMenu(true);
+                    }
+                });
+            }
+            
+            // --- NEW: Back to Top Logic ---
+            const backToTopButton = document.getElementById('back-to-top');
+            const scrollThreshold = 300; // Pixels scrolled before button appears
+
+            // Function to show/hide the button
+            function toggleBackToTop() {
+                // Check both documentElement (standard) and body (for cross-browser support)
+                if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            }
+
+            // Function to scroll smoothly to the top
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Event Listeners for the Back to Top button
+            window.addEventListener('scroll', toggleBackToTop);
+            backToTopButton.addEventListener('click', scrollToTop);
+        });
+    </script>
+
+</body>
+</html>

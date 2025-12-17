@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Report: User Information Behaviour & Data Protection (Neon Theme)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Inter for body/report text (sans-serif default)
+                        sans: ['Inter', 'sans-serif'], 
+                        // Poppins for section headings/theme (explicit utility class)
+                        theme: ['Poppins', 'sans-serif'], 
+                        // Dancing Script for large display text/logo
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        // Primary theme color is Neon Green
+                        'theme-neon': '#12d640', 
+                        'theme-dark': '#010410', 
+                        'theme-accent': '#a78bfa', // Purple/Indigo kept as a secondary accent
+                        // Data colors are defined but not strictly used in this visual theme, kept for completeness
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640; 
+            --purple-accent: #a78bfa; 
+            --glass-bg: rgba(0, 0, 0, 0.75); 
+            --glass-border: rgba(18, 214, 64, 0.4); 
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4); 
+            --neon-glow-text: 0 0 5px rgba(18, 214, 64, 0.8);
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #010410; 
+            color: white; 
+            margin: 0;
+            min-height: 100vh;
+            scroll-behavior: smooth; /* Added smooth scroll */
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Placeholder space background image */
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover; 
+            opacity: 0.1; 
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        /* --- Custom Navigation Link Styles (for neon effect) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: var(--neon-shadow);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neon-green);
+            box-shadow: var(--neon-shadow);
+        }
+        
+        /* --- Custom List Style (Neon Bullet) --- */
+        .styled-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .styled-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--neon-green); /* Neon bullet */
+            text-shadow: 0 0 5px var(--neon-green);
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+        
+        /* Neon Button Base Style */
+        .neon-button {
+            box-shadow: 0 0 10px rgba(18, 214, 64, 0.5);
+            transition: box-shadow 0.3s, background-color 0.3s;
+        }
+        .neon-button:hover {
+            box-shadow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Close Button (Re-themed for consistency) --- */
+        #close-post-btn {
+            position: fixed; 
+            top: 100px;
+            right: 20px;
+            z-index: 500;
+            font-size: 2.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        #close-post-btn:hover, #close-post-btn:focus {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            outline: none;
+        }
+        @media (min-width: 640px) { 
+            #close-post-btn {
+                top: 100px;
+                right: 40px;
+            }
+        }
+        
+        /* --- Planetary Animation System --- */
+        .system {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            opacity: 0.2; 
+            pointer-events: none;
+        }
+        .sun {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+        .ear-path, .jup-path {
+            position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear {
+            width: 10px; height: 10px; background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite;
+        }
+        .jup {
+            width: 18px; height: 18px; background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8 bg-theme-dark text-white antialiased">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../../../index.html" class="text-3xl font-extrabold tracking-wider text-white" style="font-family: 'Dancing Script', cursive; text-decoration: none; text-shadow: 0 0 8px var(--neon-green);">
+                Han Tran
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" aria-label="Main Navigation">
+                <a href="../../../index.html" class="nav-link">Home</a>
+                <a href="../../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
+                <a href="#contacts" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 hidden transition-transform duration-300 ease-in-out" aria-hidden="true">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../../Layout/portfolio.html" class="block py-2 hover:text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../../Layout/story.html" class="block py-2 text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Resume</a></li>
+            <li><a href="#contacts" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-6 sm:px-12 pt-28 pb-12" role="main">
+        <article class="relative max-w-6xl mx-auto space-y-12"> 
+            
+            <a id="close-post-btn" href="../../../Layout/portfolio.html" class="text-white hover:text-[var(--neon-green)] transition duration-300" aria-label="Close Blog Post" title="Back to Portfolio Index"> 
+                <i class="bx bx-x"></i>
+            </a>
+
+            <header class="glass-panel rounded-xl p-8 border-t-4 border-[var(--neon-green)] shadow-[0_0_25px_rgba(18,214,64,0.1)]">
+                <h1 class="text-4xl font-extrabold font-theme text-theme-neon mb-2" style="text-shadow: var(--neon-glow-text);">Professional Report: User Information Behaviour & Data Protection</h1>
+                <p class="text-xl text-theme-accent font-semibold mb-6">Author: Han Tran</p>
+
+                <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+                    <a href="https://www.doria.fi/bitstream/handle/10024/189268/tran_han.pdf?sequence=3" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-theme-neon text-theme-dark rounded-full neon-button transition">
+                        <i class="bx bxs-file-pdf w-4 h-4 mr-2"></i>
+                        Open Research PDF
+                    </a>
+
+                    <a href="https://public.tableau.com/app/profile/hantran.fi/viz/DataPrivacyQuestionnaireDASHBOARD/OVERVIEW" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-theme-neon text-theme-dark rounded-full neon-button transition">
+                        <i class="bx bxs-dashboard w-4 h-4 mr-2"></i>
+                        Open Dashboard
+                    </a>
+                </div>
+            </header>
+
+
+            <section id="introduction" class="glass-panel rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-bold font-theme text-theme-neon mb-4 border-b pb-2 border-theme-accent/50">1. Introduction</h2>
+                <p class="leading-relaxed text-gray-200">
+                    Digital platforms increasingly rely on user data for personalization, monetization, and engagement. Concurrently, privacy regulations such as <strong class="text-theme-neon">GDPR</strong> and <strong class="text-theme-neon">CCPA</strong>, along with growing user awareness, demand robust data protection measures. This report presents insights from a dashboard visualizing user information behaviour, derived from a comprehensive questionnaire survey. It highlights how <strong class="text-theme-neon">awareness, trust, cultural norms, and technological adoption</strong> shape privacy attitudes and practices.
+                </p>
+            </section>
+
+            <section class="glass-panel rounded-xl p-6 space-y-4">
+                <h2 class="text-2xl font-bold font-theme text-theme-neon border-b pb-2 border-theme-accent/50">2. Summary and Analysis</h2>
+                <p class="text-gray-200 leading-relaxed">
+                    This document summarizes and analyzes user information behavior, focusing on demographics, usage frequency, security concerns, awareness, and attitudes toward regulation. 
+                    The survey includes <strong class="text-theme-neon">129 respondents from 42 countries across 7 continents</strong>.
+                </p>
+            </section>
+
+            <section class="glass-panel rounded-xl p-6 space-y-4">
+                <h2 class="text-2xl font-bold font-theme text-theme-neon border-b pb-2 border-theme-accent/50">3. Demographics & Digital Usage</h2>
+                <h3 class="text-xl font-semibold text-theme-accent">Age and Employment</h3>
+                <ul class="styled-list text-gray-200">
+                    <li>Age Groups: Largest 18-24 (42.64%, 55 respondents), followed by 25-34 (31.78%, 41 respondents).</li>
+                    <li>Employment Status: Majority Students (55.81%, 72 respondents), followed by Employed (33.33%, 43 respondents).</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-theme-accent">Digital Platform and Device Frequency</h3>
+                <p class="text-gray-200">Respondents’ frequent or regular usage (excluding rarely/never use):</p>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-700 table-auto">
+                        <thead class="bg-gray-800/80">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-theme-neon uppercase tracking-wider">Platform</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-theme-neon uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-theme-neon uppercase tracking-wider">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            <tr><td class="px-6 py-4 text-sm text-white">Social Media</td><td class="px-6 py-4 text-sm text-gray-300">86</td><td class="px-6 py-4 text-sm text-gray-300">85.99%</td></tr>
+                            <tr><td class="px-6 py-4 text-sm text-white">Communication Platforms</td><td class="px-6 py-4 text-sm text-gray-300">82</td><td class="px-6 py-4 text-sm text-gray-300">81.18%</td></tr>
+                            <tr><td class="px-6 py-4 text-sm text-white">Content Sharing Platforms</td><td class="px-6 py-4 text-sm text-gray-300">74</td><td class="px-6 py-4 text-sm text-gray-300">80.44%</td></tr>
+                            <tr><td class="px-6 py-4 text-sm text-white">Streaming Platforms</td><td class="px-6 py-4 text-sm text-gray-300">73</td><td class="px-6 py-4 text-sm text-gray-300">84.88%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="overflow-x-auto mt-4">
+                    <table class="min-w-full divide-y divide-gray-700 table-auto">
+                        <thead class="bg-gray-800/80">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-theme-neon uppercase tracking-wider">Device</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-theme-neon uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-theme-neon uppercase tracking-wider">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            <tr><td class="px-6 py-4 text-sm text-white">Smartphone</td><td class="px-6 py-4 text-sm text-gray-300">79</td><td class="px-6 py-4 text-sm text-gray-300">84.85%</td></tr>
+                            <tr><td class="px-6 py-4 text-sm text-white">Laptop/Desktop</td><td class="px-6 py-4 text-sm text-gray-300">83</td><td class="px-6 py-4 text-sm text-gray-300">79.54%</td></tr>
+                            <tr><td class="px-6 py-4 text-sm text-white">Smart TV</td><td class="px-6 py-4 text-sm text-gray-300">44</td><td class="px-6 py-4 text-sm text-gray-300">53.74%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="glass-panel rounded-xl p-6 space-y-4">
+                <h2 class="text-2xl font-bold font-theme text-theme-neon border-b pb-2 border-theme-accent/50">4. Security Concerns & Awareness</h2>
+
+                <h3 class="text-xl font-semibold text-theme-accent" >Concern About Data Security</h3>
+                <ul class="styled-list text-gray-200">
+                    <li><span class="text-theme-neon">87.6%</span> of respondents are concerned about data security:
+                        <ul class="ml-6 list-none text-gray-300">
+                            <li class="relative pl-6"><span class="absolute left-0 text-theme-accent/80">•</span> Very Concerned: 33.33% (43 respondents).</li>
+                            <li class="relative pl-6"><span class="absolute left-0 text-theme-accent/80">•</span> Somewhat Concerned: 27.13% (35 respondents)</li>
+                            <li class="relative pl-6"><span class="absolute left-0 text-theme-accent/80">•</span> Concerned: 27.13% (35 respondents)</li>
+                            <li class="relative pl-6"><span class="absolute left-0 text-theme-accent/80">•</span> Not very concerned: 11.63% (15 respondents)</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h3 class="text-xl font-semibold text-theme-accent">Awareness of Privacy Settings</h3>
+                <ul class="styled-list text-gray-200">
+                    <li><span class="text-theme-neon">58.91%</span> (76 respondents) know how to adjust privacy settings on some apps.</li>
+                    <li><span class="text-theme-neon">48.84%</span> (63 respondents) know they can adjust location, camera, and microphone permissions.</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-theme-accent">Control over Shared Information</h3>
+                <ul class="styled-list text-gray-200">
+                    <li>Only <span class="text-theme-neon">5.43%</span> (7 respondents) believe they effectively protect personal information; 37.21% (48 respondents) are "Sure (Just 50%)".</li>
+                    <li>Main barriers:
+                        <ul class="ml-6 list-none text-gray-300">
+                            <li class="relative pl-6"><span class="absolute left-0 text-theme-accent/80">•</span> Must accept or agree to get information (93 respondents)</li>
+                            <li class="relative pl-6"><span class="absolute left-0 text-theme-accent/80">•</span> Privacy policies/settings are difficult to understand (75 respondents)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="glass-panel rounded-xl p-6 space-y-4">
+                <h2 class="text-2xl font-bold font-theme text-theme-neon border-b pb-2 border-theme-accent/50">5. Experience & Regulatory Attitudes</h2>
+
+                <h3 class="text-xl font-semibold text-theme-accent">Experience with Scams/Spam</h3>
+                <ul class="styled-list text-gray-200">
+                    <li><span class="text-theme-neon">91.47%</span> (118 respondents) experienced spam via calls, messages, emails, or pop-ups.</li>
+                    <li>Scams: Frequently encountered Sometimes (25%) or Occasionally (25%).</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-theme-accent">Reading Privacy Policies</h3>
+                <ul class="styled-list text-gray-200">
+                    <li>Never read: 37.98% (49 respondents)</li>
+                    <li>Sometimes read: 34.10% (44 respondents)</li>
+                    <li>Yes read: 8.53% (11 respondents)</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-theme-accent">Regulation and Responsibility</h3>
+                <ul class="styled-list text-gray-200">
+                    <li><span class="text-theme-neon">87.6%</span> agree individuals must control collection and use of personal data.</li>
+                    <li><span class="text-theme-neon">88.37%</span> agree there should be stricter data regulations.</li>
+                    <li>Primary responsibility for data protection: Companies/Organizations (90), National Government (78), Individuals (77).</li>
+                </ul>
+            </section>
+
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+
+        </article>
+    </main>
+
+
+    <script>
+        // Mobile menu toggle logic
+        document.getElementById('mobile-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const expanded = this.getAttribute('aria-expanded') === 'true' || false;
+            this.setAttribute('aria-expanded', !expanded);
+            menu.classList.toggle('hidden');
+        });
+        
+        // Hide mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.getElementById('mobile-toggle').setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Report: Why the Synergizer IS Project Failed (Neon Theme)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Inter for body/report text (sans-serif default)
+                        sans: ['Inter', 'sans-serif'], 
+                        // Poppins for section headings/theme (explicit utility class)
+                        theme: ['Poppins', 'sans-serif'], 
+                        // Dancing Script for large display text/logo
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        // Core Theme Colors
+                        'theme-neon': '#12d640', // Neon Green
+                        'theme-dark': '#010410', // Deep Black/Blue
+                        'theme-accent': '#a78bfa', // Purple/Indigo accent
+                        // Keeping standard shades of gray/white for content contrast
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640; 
+            --purple-accent: #a78bfa; 
+            --glass-bg: rgba(0, 0, 0, 0.85); /* Slightly darker glass for better contrast */
+            --glass-border: rgba(18, 214, 64, 0.4); 
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4); 
+            --neon-glow-text: 0 0 5px rgba(18, 214, 64, 0.8);
+            --neon-glow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #010410; 
+            color: white; 
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Placeholder space background image (ensure Pexels link is valid/performant) */
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover; 
+            opacity: 0.1; /* Reduced opacity slightly */
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px); /* Increased blur for stronger effect */
+            -webkit-backdrop-filter: blur(15px); /* Webkit support */
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        /* --- Neon Heading Utility (Applied to H1 and Section Headings) --- */
+        .neon-heading-glow {
+            text-shadow: var(--neon-glow-text);
+        }
+
+        /* --- Custom Navigation Link Styles (for neon effect) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        /* Combined hover and active for a cleaner effect. Using utility for text-shadow for consistency */
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            /* Keeping custom CSS for text-shadow since Tailwind's shadow utility doesn't support glow easily */
+            text-shadow: var(--neon-shadow); 
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neon-green);
+            box-shadow: var(--neon-shadow);
+        }
+        
+        /* --- Custom List Style (Neon Bullet) --- */
+        .styled-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .styled-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--neon-green); /* Neon bullet */
+            text-shadow: 0 0 5px var(--neon-green);
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+        
+        /* Neon Button Base Style */
+        .neon-button {
+            box-shadow: 0 0 10px rgba(18, 214, 64, 0.5);
+            transition: box-shadow 0.3s, background-color 0.3s;
+        }
+        .neon-button:hover {
+            box-shadow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Close Button for Blog Post (IMPROVED POSITIONING) --- */
+        /* Adjusted positioning to be less intrusive on smaller screens */
+        #close-post-btn {
+            position: fixed; 
+            top: 100px;
+            right: 20px;
+            z-index: 500;
+            font-size: 2.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+            line-height: 1; /* Ensures icon is centered */
+        }
+        #close-post-btn:hover, #close-post-btn:focus {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            outline: none;
+        }
+        @media (min-width: 640px) { 
+            #close-post-btn {
+                top: 100px;
+                right: 40px;
+            }
+        }
+        
+        /* --- Planetary Animation System (kept for theme) --- */
+        /* No changes to planetary system for brevity/focus */
+        .system {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            opacity: 0.2; 
+            pointer-events: none;
+        }
+        .sun {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+        .ear-path, .jup-path {
+            position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear {
+            width: 10px; height: 10px; background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite;
+        }
+        .jup {
+            width: 18px; height: 18px; background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+        
+        /* --- Custom Styles for Merged Content (to match neon theme) --- */
+        .glass-detail {
+            background: rgba(0, 0, 0, 0.7); 
+            border: 1px solid rgba(18, 214, 64, 0.2);
+        }
+        .neon-link {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px rgba(18, 214, 64, 0.5);
+        }
+        .summary-muted {
+            color: #ccc; 
+            font-size: 0.9rem;
+        }
+        .whys details {
+            background: rgba(18, 214, 64, 0.05); /* Lighter tint */
+            border: 1px solid var(--glass-border);
+            color: white;
+            transition: background 0.3s;
+            border-radius: 0.5rem; /* Added border-radius for visual consistency */
+            padding: 1rem; /* Added padding to details element */
+        }
+        .whys details summary {
+            cursor: pointer;
+            list-style: none; /* Hide default triangle */
+            color: var(--neon-green);
+            text-shadow: 0 0 3px var(--neon-green);
+            font-weight: 600; /* Added font-weight */
+        }
+        /* Custom marker for details summary */
+        .whys details summary::before {
+            content: "+";
+            display: inline-block;
+            margin-right: 0.5rem;
+            transition: transform 0.3s;
+            color: var(--neon-green);
+        }
+        .whys details[open] summary::before {
+            content: "-";
+            transform: rotate(90deg);
+        }
+
+        .rec-item {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 5px rgba(18, 214, 64, 0.3);
+            transition: box-shadow 0.3s;
+        }
+        .rec-item:hover {
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8 bg-theme-dark text-white antialiased">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../../../index.html" class="text-3xl font-extrabold tracking-wider text-white" style="font-family: var(--font-display, 'Dancing Script', cursive); text-decoration: none; text-shadow: 0 0 8px var(--neon-green);">
+                Pansy
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" aria-label="Main Navigation">
+                <a href="../../../index.html" class="nav-link">Home</a>
+                <a href="../../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
+                <a href="#contacts" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 hidden transition-transform duration-300 ease-in-out" aria-hidden="true">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../../Layout/portfolio.html" class="block py-2 hover:text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../../Layout/story.html" class="block py-2 text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Resume</a></li>
+            <li><a href="#contacts" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-6 sm:px-12 pt-28 pb-12" role="main">
+        <article class="relative glass-panel p-8 md:p-12 rounded-lg shadow-2xl" aria-labelledby="report-title"> 
+            
+            <a id="close-post-btn" href="../../../Layout/portfolio.html" aria-label="Back to Portfolio Index" title="Back to Portfolio Index"> 
+                <i class="bx bx-x"></i>
+            </a>
+
+            <header class="mb-8">
+                <h1 id="report-title" class="text-3xl sm:text-4xl font-theme font-bold mb-2 text-[var(--neon-green)] neon-heading-glow">
+                    Why the Synergizer IS Project Failed — And What We Can Learn From It
+                </h1>
+                <div class="text-base text-theme-accent font-medium mb-4">
+                    A concise post-mortem of MarketSource's Synergizer initiative: causes, 5 Whys analyses, and pragmatic recommendations.
+                </div>
+                <div class="border-b-2 border-[var(--neon-green)] opacity-50"></div>
+            </header>
+
+            <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mb-8">
+                <a href="https://drive.google.com/file/d/18FX7hCs_kgczz1qw_R55T21Yca08KtsZ/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-theme-neon text-theme-dark font-bold rounded-full neon-button hover:bg-white transition">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Open Research PDF
+                </a>
+            </div>
+            
+            <nav class="glass-panel p-4 rounded-lg mb-8" aria-label="Table of contents">
+                <h2 class="text-xl font-theme font-semibold mb-3 text-white">Contents</h2>
+                <div class="flex flex-wrap gap-2">
+                    <a href="#overview" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">Overview</a>
+                    <a href="#budget" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">1. Budget & Schedule</a>
+                    <a href="#quality" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">2. Quality of the IS</a>
+                    <a href="#profitability" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">3. Profitability</a>
+                    <a href="#communication" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">4. Communication</a>
+                    <a href="#adoption" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">5. User Adoption</a>
+                    <a href="#recommendations" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">Action Recommendations</a>
+                    <a href="#conclusion" class="px-3 py-1 rounded-md text-sm font-medium neon-link hover:bg-theme-neon/20 transition duration-150">Conclusion</a>
+                </div>
+            </nav>
+
+            <main class="space-y-8">
+                <section id="overview" class="glass-detail p-6 rounded-lg" aria-labelledby="overview-heading">
+                    <h2 id="overview-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-3 neon-heading-glow">Overview</h2>
+                    <p class="text-lg text-gray-200">When MarketSource launched the <b style="color: rgb(220, 104, 218);">Synergizer</b> project, the mission was bold: build a fully customized information system to manage a growing global workforce, improve collaboration, and eliminate inefficiencies. The ambition was admirable — but the end result was a system that users refused to adopt, financial losses, and ultimately a full return to the old processes.</p>
+                    <p class="summary-muted mt-2">Understanding why Synergizer failed requires looking beyond surface-level problems. Below we break down the core failure factors with <b style="color: rgb(220, 104, 218);">5 Whys</b> root-cause analyses and conclude with lessons MarketSource must carry forward. </p>
+                </section>
+
+                <section id="budget" class="glass-detail p-6 rounded-lg" aria-labelledby="budget-heading">
+                    <h2 id="budget-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-3 neon-heading-glow">1. Budget &amp; Schedule: Delivered on Time but Over Budget</h2>
+                    <p class="text-gray-200">The project impressively met its deadline — but at a steep cost. Synergizer exceeded its budget by <b style="color: rgb(243, 105, 59);">20%</b>, primarily due to the sudden departure of a key resource and the urgent need to recruit two replacements.</p>
+
+                    <div class="whys mt-4" aria-label="5 Whys for Budget & Schedule">
+                        <details>
+                            <summary>5 Whys: Budget &amp; Schedule Failure</summary>
+                            <ol class="styled-list list-decimal ml-6 mt-2 text-gray-300">
+                                <li><strong>Why did the project exceed budget?</strong><br>Because two additional resources were hired urgently.</li>
+                                <li><strong>Why was urgent hiring needed?</strong><br>A key employee left mid-project.</li>
+                                <li><strong>Why did this departure cause major disruption?</strong><br>There was no contingency plan for critical personnel.</li>
+                                <li><strong>Why was there no contingency plan?</strong><br>Risk management practices were not formally implemented.</li>
+                                <li><strong>Why were risk management practices missing?</strong><br>The project manager lacked formal PM training, and the company relied on informal experience rather than structured methodologies.</li>
+                            </ol>
+                            <p class="summary-muted mt-2">Conclusion: The cost overrun reflects deep structural weaknesses in <b style="color: rgb(220, 104, 218);">planning and risk management</b>, not a single isolated event.</p>
+                        </details>
+                    </div>
+                </section>
+
+                <section id="quality" class="glass-detail p-6 rounded-lg" aria-labelledby="quality-heading">
+                    <h2 id="quality-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-3 neon-heading-glow">2. Quality of the Information System: Technically Correct, Practically Wrong</h2>
+                    <p class="text-gray-200">Technically, Synergizer worked and fulfilled the documented requirements. But users found it confusing, unintuitive, and misaligned with their workflow. That mismatch led directly to rejection.</p>
+
+                    <div class="whys mt-4">
+                        <details>
+                            <summary>5 Whys: Poor Quality of the Delivered System</summary>
+                            <ol class="styled-list list-decimal ml-6 mt-2 text-gray-300">
+                                <li><strong>Why did the system not meet user expectations?</strong><br>It wasn’t aligned with their daily workflow or usability needs.</li>
+                                <li><strong>Why wasn’t it aligned?</strong><br>Users were not adequately involved in design or testing.</li>
+                                <li><strong>Why were users not involved?</strong><br>No user-centered design process or feedback loop was implemented.</li>
+                                <li><strong>Why wasn’t a user-centered approach used?</strong><br>The team focused on technical requirements rather than user experience.</li>
+                                <li><strong>Why was UX overlooked?</strong><br>The in-house team lacked experience with internal systems and the project lacked <b style="color: rgb(220, 104, 218);">agile methods</b> that could have incorporated ongoing feedback.</li>
+                            </ol>
+                            <p class="summary-muted mt-2">Conclusion: Technical correctness couldn’t compensate for poor <b style="color: rgb(220, 104, 218);">human-centered design</b>.</p>
+                        </details>
+                    </div>
+                </section>
+
+                <section id="profitability" class="glass-detail p-6 rounded-lg" aria-labelledby="profitability-heading">
+                    <h2 id="profitability-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-3 neon-heading-glow">3. Profitability: Expected Savings Never Materialized</h2>
+                    <p class="text-gray-200">One of Synergizer’s goals was to reduce financial waste — especially inaccurate time reporting by virtual employees. Because the system was quickly abandoned, none of the intended cost savings were achieved; the project created new expenses and contributed to the loss of a key client.</p>
+
+                    <div class="whys mt-4">
+                        <details>
+                            <summary>5 Whys: Profitability Failure</summary>
+                            <ol class="styled-list list-decimal ml-6 mt-2 text-gray-300">
+                                <li><strong>Why didn’t the project improve profitability?</strong><br>Users rejected the system, so cost-saving features weren’t utilized.</li>
+                                <li><strong>Why did users reject the system?</strong><br>It felt unfamiliar, complex, and disruptive.</li>
+                                <li><strong>Why was it unfamiliar and complex?</strong><br>Users weren’t involved and received little training.</li>
+                                <li><strong>Why weren’t they involved or trained?</strong><br>No <b style="color: rgb(220, 104, 218);">change management plan</b> was implemented.</li>
+                                <li><strong>Why wasn’t change management implemented?</strong><br>Leadership underestimated how crucial user engagement is to IS success.</li>
+                            </ol>
+                            <p class="summary-muted mt-2">Conclusion: Profitability was never given a credible chance to appear because adoption failed early.</p>
+                        </details>
+                    </div>
+                </section>
+
+                <section id="communication" class="glass-detail p-6 rounded-lg" aria-labelledby="communication-heading">
+                    <h2 id="communication-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-3 neon-heading-glow">4. Communication: The Silent Killer of the Project</h2>
+                    <p class="text-gray-200">Communication failures permeated Synergizer. Stakeholders were not informed, user concerns were not captured, and virtual teams were not engaged in meaningful conversations — leaving users confused, fearful, and distrustful.</p>
+
+                    <div class="whys mt-4">
+                        <details>
+                            <summary>5 Whys: Communication Failure</summary>
+                            <ol class="styled-list list-decimal ml-6 mt-2 text-gray-300">
+                                <li><strong>Why was communication ineffective?</strong><br>No structured communication plan existed.</li>
+                                <li><strong>Why wasn’t there a communication plan?</strong><br>The project manager didn’t prioritize it during planning.</li>
+                                <li><strong>Why wasn’t communication prioritized?</strong><br>Technical delivery overshadowed stakeholder engagement.</li>
+                                <li><strong>Why was stakeholder engagement undervalued?</strong><br>Leadership assumed users would naturally adapt to the new system.</li>
+                                <li><strong>Why did they assume this?</strong><br>The organization lacked a culture of formal project and change management.</li>
+                            </ol>
+                            <p class="summary-muted mt-2">Conclusion: Poor communication created resistance and undermined adoption.</p>
+                        </details>
+                    </div>
+                </section>
+
+                <section id="adoption" class="glass-detail p-6 rounded-lg" aria-labelledby="adoption-heading">
+                    <h2 id="adoption-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-3 neon-heading-glow">5. User Adoption: The Central Failure Factor</h2>
+                    <p class="text-gray-200">Everything collapsed at the point of <b style="color: rgb(220, 104, 218);">user adoption</b>. Virtual employees, managers, and even executives refused to use the system because:</p>
+                    <ul class="styled-list ml-4 mt-3 text-gray-300">
+                        <li>The system was unfamiliar</li>
+                        <li>Workflows didn’t translate smoothly</li>
+                        <li>Training was insufficient</li>
+                        <li>Communication was unclear</li>
+                        <li>Some feared the system would expose inflated working hours</li>
+                    </ul>
+                    <p class="summary-muted mt-4">In short: no user adoption &rarr; no business value &rarr; project failure.</p>
+                </section>
+
+                <section id="recommendations" class="glass-detail p-6 rounded-lg" aria-labelledby="recommendations-heading">
+                    <h2 id="recommendations-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-4 neon-heading-glow">What MarketSource Must Do Next: Action Recommendations</h2>
+                    <p class="text-gray-200 mb-4">To avoid repeating Synergizer’s fate, MarketSource should adopt the following actions:</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" role="list">
+                        <div class="rec-item p-4 rounded-lg" role="listitem">
+                            <strong class="text-theme-neon">1. Implement Formal PM Training</strong>
+                            <p class="summary-muted mt-1">Equip project managers with <b style="color: rgb(220, 104, 218);">PMBOK</b>, <b style="color: rgb(220, 104, 218);">Agile</b>, or hybrid methodologies.</p>
+                        </div>
+                        <div class="rec-item p-4 rounded-lg" role="listitem">
+                            <strong class="text-theme-neon">2. Create Detailed Risk &amp; Resource Contingency Plans</strong>
+                            <p class="summary-muted mt-1">Budget buffers, resource backup plans, and clear risk triggers are essential.</p>
+                        </div>
+                        <div class="rec-item p-4 rounded-lg" role="listitem">
+                            <strong class="text-theme-neon">3. Adopt User-Centered Design</strong>
+                            <p class="summary-muted mt-1">Engage end-users early and throughout development; run iterative testing.</p>
+                        </div>
+                        <div class="rec-item p-4 rounded-lg" role="listitem">
+                            <strong class="text-theme-neon">4. Deploy a Full Change Management Strategy</strong>
+                            <p class="summary-muted mt-1">Communicate early, train thoroughly, and prepare people for change (<b style="color: rgb(220, 104, 218);">ADKAR</b>/Kotter patterns). 
+                            
+
+[Image of ADKAR Change Management Model]
+
+                            </p>
+                        </div>
+                        <div class="rec-item p-4 rounded-lg" role="listitem">
+                            <strong class="text-theme-neon">5. Establish Two-Way Communication Channels</strong>
+                            <p class="summary-muted mt-1">Support transparent updates, user feedback loops, and active stakeholder engagement.</p>
+                        </div>
+                        <div class="rec-item p-4 rounded-lg" role="listitem">
+                            <strong class="text-theme-neon">6. Encourage Cross-Functional Collaboration</strong>
+                            <p class="summary-muted mt-1">Close coordination between developers, users, and leadership ensures alignment.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="conclusion" class="glass-detail p-6 rounded-lg" aria-labelledby="conclusion-heading">
+                    <h2 id="conclusion-heading" class="text-2xl font-theme font-semibold text-theme-accent mb-3 neon-heading-glow">Conclusion: A Failure That Can Become a Turning Point</h2>
+                    <p class="text-gray-200">The Synergizer project failed not because of technology, but because of <b style="color: rgb(220, 104, 218);">people, process, and communication</b>. MarketSource now has a unique opportunity to transform its project culture — if it applies the lessons learned.</p>
+                    <p class="summary-muted mt-2">With structured methodology, user-centered practices, and a stronger focus on communication and change management, future IS projects can achieve the value Synergizer could not.</p>
+                </section>
+            </main>
+            
+        </article>
+    </main>
+
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+    
+    <script>
+        // Mobile menu toggle logic
+        document.getElementById('mobile-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            
+            // Toggle the ARIA attributes
+            this.setAttribute('aria-expanded', !isExpanded);
+            menu.setAttribute('aria-hidden', isExpanded);
+            
+            // Toggle the Tailwind utility class 'hidden'
+            menu.classList.toggle('hidden');
+        });
+        
+        // Hide mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(item => {
+            item.addEventListener('click', () => {
+                const menu = document.getElementById('mobile-menu');
+                const toggleButton = document.getElementById('mobile-toggle');
+
+                menu.classList.add('hidden');
+                menu.setAttribute('aria-hidden', 'true');
+                toggleButton.setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+
+</body>
+</html>

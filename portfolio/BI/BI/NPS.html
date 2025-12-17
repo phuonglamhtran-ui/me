@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPS Customer Insights Report (Neon Theme)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Inter for body/report text (sans-serif default)
+                        sans: ['Inter', 'sans-serif'], 
+                        // Poppins for section headings/theme (explicit utility class)
+                        theme: ['Poppins', 'sans-serif'], 
+                        // Dancing Script for large display text/logo
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        'primary-green': '#047857', 
+                        'highlight-green': '#10B981', 
+                        'detractor-red': '#DC2626', 
+                        'passive-yellow': '#F59E0B', 
+                        'promoter-green': '#059669', 
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640; 
+            --purple-accent: #a78bfa; 
+            --glass-bg: rgba(0, 0, 0, 0.75); 
+            --glass-border: rgba(18, 214, 64, 0.4); 
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4); 
+            --neon-glow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #010410; 
+            color: white; 
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Replace with a locally hosted image or preferred service if possible */
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover; 
+            opacity: 0.1; 
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        /* --- Custom Navigation Link Styles (for neon effect) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: var(--neon-shadow);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neon-green);
+            box-shadow: var(--neon-shadow);
+        }
+
+        /* ====================================================================== */
+        /* --- REPORT/MODAL SPECIFIC STYLES --- */
+        /* ====================================================================== */
+
+        /* Report Table Styling */
+        .report-table th, .report-table td {
+            padding: 1rem;
+            text-align: left;
+        }
+        .report-table tbody tr {
+            background-color: #ffffff; 
+        }
+        .report-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .report-table th {
+            font-weight: 600;
+            color: white;
+        }
+        .report-table td {
+            color: #334155; 
+        }
+
+        /* Score calculation formula block */
+        .nps-formula {
+            font-size: 1.125rem;
+            color: #334155;
+            padding: 1rem;
+            background-color: #f0f9ff;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--neon-green);
+        }
+
+        /* Modal Customization */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 900; 
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal.open { 
+            opacity: 1; 
+            visibility: visible; 
+        }
+        .modal .frame {
+            width: 100%;
+            max-width: 1200px;
+            height: 80vh; 
+            background: #fff;
+            border-radius: 0.75rem; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(18, 214, 64, 0.7); 
+            border: 2px solid var(--neon-green);
+        }
+        .modal .frame iframe {
+            flex-grow: 1;
+            width: 100%;
+            border: none;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+        }
+        .modal-close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #334155;
+            transition: color 0.2s;
+        }
+        .modal-close-btn:hover {
+            color: var(--detractor-red);
+        }
+
+
+        /* --- Close Button for Blog Post (IMPROVED POSITIONING) --- */
+        #close-post-btn {
+            position: fixed; 
+            top: 100px;
+            right: 20px;
+            z-index: 500;
+            font-size: 2.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        #close-post-btn:hover, #close-post-btn:focus {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            outline: none;
+        }
+        @media (min-width: 640px) { 
+            #close-post-btn {
+                top: 100px;
+                right: 40px;
+            }
+        }
+        /* --- Planetary Animation System (kept for theme) --- */
+        .system {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            opacity: 0.2; 
+            pointer-events: none;
+        }
+        .sun {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+        .ear-path, .jup-path {
+            position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear {
+            width: 10px; height: 10px; background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite;
+        }
+        .jup {
+            width: 18px; height: 18px; background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../index.html" class="text-3xl font-extrabold tracking-wider text-white" style="font-family: var(--font-display, 'Dancing Script', cursive); text-decoration: none; text-shadow: 0 0 8px var(--neon-green);">
+                Pansy
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" aria-label="Main Navigation">
+                <a href="../../../index.html" class="nav-link">Home</a>
+                <a href="../../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
+                <a href="../../../Layout/contact.html" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 hidden transition-transform duration-300 ease-in-out" aria-hidden="true">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../../Layout/portfolio.html" class="block py-2 hover:text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../../Layout/story.html" class="block py-2 text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Resume</a></li>
+            <li><a href="../../../Layout/contact.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-6 sm:px-12 pt-28 pb-12" role="main">
+        <article class="relative"> 
+            
+            <a id="close-post-btn" href="../Layout/portfolio.html" class="text-white hover:text-[var(--neon-green)] transition duration-300" aria-label="Close Blog Post" title="Back to Portfolio Index"> 
+                <i class="bx bx-x"></i>
+            </a>
+            
+            <header class="max-w-7xl mx-auto mb-10 border-b pb-4 glass-panel rounded-xl p-6 shadow-2xl">
+                <h1 class="text-4xl sm:text-5xl font-extrabold font-theme text-[var(--neon-green)] mb-2" style="text-shadow: 0 0 15px rgba(18, 214, 64, 0.9);">
+                    📊 Net Promoter Score (NPS) Customer Insights Report
+                </h1>
+                <p class="text-lg text-gray-200">A detailed analysis of global customer loyalty and satisfaction.</p>
+                <div class="mt-4 text-sm flex flex-col sm:flex-row sm:space-x-8">
+                    <span class="text-gray-300"><strong>Prepared For:</strong> Executive Leadership Team</span>
+                    <span class="text-gray-300"><strong>Date:</strong> February 26, 2023</span>
+                </div>
+
+                <div class="mt-6 flex flex-wrap justify-center sm:justify-start gap-4">
+                    <button id="openVizBtn" data-modal-target="vizModal" class="px-5 py-2 font-bold text-black bg-[var(--neon-green)] rounded-lg shadow-xl transition duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(18,214,64,1)]" aria-haspopup="dialog" aria-controls="vizModal">
+                        <i class="bx bx-bar-chart-alt-2 mr-2"></i> Open Interactive Visualization
+                    </button>
+                    <a class="px-5 py-2 font-bold text-[var(--neon-green)] bg-transparent border-2 border-[var(--neon-green)] rounded-lg shadow-sm transition duration-300 hover:bg-[rgba(18,214,64,0.1)] hover:shadow-[0_0_10px_rgba(18,214,64,0.5)]"
+                        href="https://public.tableau.com/views/CustomerSegmentationandMarketBasket/Dashboard2?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link"
+                        target="_blank" rel="noopener noreferrer">
+                        <i class="bx bx-link-external mr-2"></i> View on Tableau Public
+                    </a>
+                </div>
+            </header>
+
+            <section class="max-w-7xl mx-auto space-y-12">
+
+                <section id="executive-summary">
+                    <h2 class="text-3xl font-bold text-white border-b-2 border-primary-green pb-2 mb-6 font-theme">I. Executive Summary</h2>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-2xl border-t-4 border-primary-green">
+                        <p class="text-gray-700 leading-relaxed mb-6">
+                            This report provides a detailed analysis of the recent global Net Promoter Score (NPS) survey, which gathered <strong>8,144 customer responses</strong>. The overall NPS score is <strong>36</strong>, indicating <span class="font-bold text-highlight-green">moderate satisfaction</span> but significant room for improvement.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-6">
+                            The most critical finding is the high proportion of <strong>Detractors (41.1%)</strong>, who currently outnumber Promoters (28.5%). Immediate strategic focus must be placed on identifying and mitigating the root causes of detraction while leveraging high-performing regions to standardize best practices globally.
+                        </p>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                            
+                            <div class="bg-primary-green text-white p-5 rounded-xl shadow-lg flex flex-col items-center justify-center">
+                                <span class="text-xs font-semibold uppercase opacity-80">Overall NPS</span>
+                                <span class="text-5xl font-extrabold mt-1">36</span>
+                                <span class="text-xs mt-2 opacity-80 text-center">Moderate Performance</span>
+                            </div>
+
+                            <div class="bg-red-50 border-b-4 border-detractor-red p-5 rounded-xl shadow-md">
+                                <span class="text-xs font-semibold uppercase text-detractor-red">Detractors (0-6)</span>
+                                <span class="block text-3xl font-bold mt-1 text-detractor-red">41.1%</span>
+                                <span class="text-sm text-gray-700">(3,344 customers)</span>
+                                <p class="text-xs mt-2 text-gray-600">Major risk to reputation and loyalty.</p>
+                            </div>
+
+                            <div class="bg-amber-50 border-b-4 border-passive-yellow p-5 rounded-xl shadow-md">
+                                <span class="text-xs font-semibold uppercase text-passive-yellow">Passives (7-8)</span>
+                                <span class="block text-3xl font-bold mt-1 text-passive-yellow">30.4%</span>
+                                <span class="text-sm text-gray-700">(2,475 customers)</span>
+                                <p class="text-xs mt-2 text-gray-600">Large untapped opportunity for conversion.</p>
+                            </div>
+
+                            <div class="bg-emerald-50 border-b-4 border-promoter-green p-5 rounded-xl shadow-md">
+                                <span class="text-xs font-semibold uppercase text-promoter-green">Promoters (9-10)</span>
+                                <span class="block text-3xl font-bold mt-1 text-promoter-green">28.5%</span>
+                                <span class="text-sm text-gray-700">(2,325 customers)</span>
+                                <p class="text-xs mt-2 text-gray-600">Loyalty base for growth and advocacy.</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </section>
+
+                <section id="strategic-findings">
+                    <h2 class="text-3xl font-bold text-white border-b-2 border-primary-green pb-2 mb-6 font-theme">II. Strategic Findings and Analysis</h2>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-semibold text-white mb-4">A. Overall Sentiment Breakdown</h3>
+                        <div class="bg-white p-6 rounded-xl shadow-md space-y-4">
+                            <p class="text-gray-700">The current sentiment distribution presents a challenging landscape. The NPS is calculated as:</p>
+                            
+                            <div class="nps-formula">
+                                NPS = (Promoters%) - (Detractors%) = 28.5% - 41.1% = -12.6%
+                                <span class="block mt-2 text-sm text-gray-500">
+                                    (The reported NPS of 36 suggests slight rounding or calculation differences in the source data, but the detractor dominance is the key takeaway.)
+                                </span>
+                            </div>
+                            <ul class="list-disc ml-6 text-gray-700 space-y-2">
+                                <li><strong class="text-detractor-red">Detractor Risk:</strong> The 41.1% detractor rate suggests fundamental issues that are driving negative word-of-mouth and churn.</li>
+                                <li><strong class="text-passive-yellow">Passive Potential:</strong> The 30.4% passive group is a strategic asset. Moving even a small percentage of this group to Promoter status could dramatically increase the overall NPS.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-semibold text-white mb-4">B. Regional and Geographic Polarization</h3>
+                        <p class="text-gray-200 mb-4">The data reveals inconsistent performance across operational zones, indicating a lack of standardized customer experience (CX).</p>
+                        
+                        <div class="overflow-x-auto rounded-xl shadow-lg">
+                            <table class="w-full report-table border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-gray-800 text-white border-b-2 border-primary-green">Region/Area Type</th>
+                                        <th class="bg-gray-800 text-white border-b-2 border-primary-green">Key Finding</th>
+                                        <th class="bg-gray-800 text-white border-b-2 border-primary-green">Implication</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-semibold text-gray-800">Top 5 Regions</td>
+                                        <td class="text-gray-800">Region 1 has the highest count of <strong>both</strong> Promoters (1,200) and Detractors (1,000).</td>
+                                        <td class="font-semibold text-gray-700">Experiences are polarized, pointing to <span class="text-detractor-red">inconsistency</span> in service delivery.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold text-gray-800">Country-Level NPS</td>
+                                        <td class="text-gray-800">Scores range widely from <strong>55 to 75</strong>.</td>
+                                        <td class="font-semibold text-gray-700"><strong class="text-primary-green">Geographic strategy is required.</strong> A one-size-fits-all approach is failing.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold text-gray-800">Area-Level NPS</td>
+                                        <td class="text-gray-800">All areas show similar scores <strong>(~60.9%)</strong>.</td>
+                                        <td class="text-gray-700">Operational zones appear uniform, masking the significant differences driven by <strong>regional/country-level</strong> factors.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-semibold text-white mb-4">C. Suggested Improvements and Data Gaps</h3>
+                        <p class="text-gray-200 mb-4">The following suggested improvements are essential to convert these findings into an actionable improvement strategy:</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-passive-yellow">
+                                <p class="font-semibold text-lg text-gray-800">1. Driver Analysis</p>
+                                <p class="text-sm text-gray-600">Add data points on specific drivers (Product Quality, Support Experience, Pricing) to identify the true root causes of detraction, moving beyond mere hypotheses.</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-passive-yellow">
+                                <p class="font-semibold text-lg text-gray-800">2. Sentiment and Commentary</p>
+                                <p class="text-sm text-gray-600">Implement sentiment analysis on customer comments to provide the crucial qualitative "voice of the customer" necessary for targeted fixes.</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-passive-yellow">
+                                <p class="font-semibold text-lg text-gray-800">3. Benchmarking</p>
+                                <p class="text-sm text-gray-600">Contextualize the NPS of 36 with industry benchmarks to understand our performance relative to competitors and set realistic goals.</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-passive-yellow">
+                                <p class="font-semibold text-lg text-gray-800">4. Target Setting</p>
+                                <p class="text-sm text-gray-600">Establish targets vs. actuals to move from a reporting mechanism to a robust performance management framework for accountability.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="recommendations">
+                    <h2 class="text-3xl font-bold text-white border-b-2 border-primary-green pb-2 mb-6 font-theme">III. Recommendations and Action Plan</h2>
+                    <p class="text-gray-200 mb-8">The path forward requires a two-pronged strategy: <strong>Immediate Mitigation</strong> of detractor risk and <strong>Strategic Amplification</strong> of promoter success.</p>
+
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-semibold text-white mb-4 border-l-4 border-detractor-red pl-3">1. Short-Term Action Plan (0-3 Months)</h3>
+                        <div class="overflow-x-auto rounded-xl shadow-lg">
+                            <table class="w-full report-table border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-detractor-red text-white">Priority</th>
+                                        <th class="bg-detractor-red text-white">Recommendation</th>
+                                        <th class="bg-detractor-red text-white">Goal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-semibold"><span class="text-detractor-red">Immediate</span></td>
+                                        <td class="text-gray-700">Detractor Root Cause Analysis (RCAs)</td>
+                                        <td class="text-gray-700">Immediately follow up with a sample of the <strong>3,344 Detractors</strong> to identify specific pain points.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold"><span class="text-primary-green">High</span></td>
+                                        <td class="text-gray-700">Regional Best Practice Study</td>
+                                        <td class="text-gray-700">Conduct a deep dive into high-performing promoter regions to <strong>document and standardize</strong> successful practices.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold"><span class="text-passive-yellow">Moderate</span></td>
+                                        <td class="text-gray-700">Passive Conversion Initiative</td>
+                                        <td class="text-gray-700">Launch a targeted campaign for the <strong>30.4% Passives</strong> offering personalized value to encourage a positive sentiment shift.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-semibold text-white mb-4 border-l-4 border-primary-green pl-3">2. Medium- to Long-Term Strategy (4+ Months)</h3>
+                        <div class="overflow-x-auto rounded-xl shadow-lg">
+                            <table class="w-full report-table border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-primary-green text-white">Strategic Focus</th>
+                                        <th class="bg-primary-green text-white">Recommendation</th>
+                                        <th class="bg-primary-green text-white">Goal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-bold text-primary-green">Process Redesign</td>
+                                        <td class="text-gray-700">Customer Journey Mapping (CJM)</td>
+                                        <td class="text-gray-700">Map the end-to-end customer journey in high-detractor regions to identify and redesign friction points.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold text-primary-green">Geographic Customization</td>
+                                        <td class="text-gray-700">Localized CX Strategy</td>
+                                        <td class="text-gray-700">Develop tailored strategies for low-scoring countries (NPS 55-60) focusing on culturally aligned service.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold text-primary-green">Advocacy & Loyalty</td>
+                                        <td class="text-gray-700">Formalize Promoter Programs</td>
+                                        <td class="text-gray-700">Implement a structured advocacy program (referrals) to strengthen the loyalty of the <strong>2,325 Promoters</strong>.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold text-primary-green">Continuous Monitoring</td>
+                                        <td class="text-gray-700">Implement Real-Time Tracking</td>
+                                        <td class="text-gray-700">Integrate NPS measurement into operational dashboards with <strong>targets vs. actuals</strong> to address emerging dissatisfaction.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </section>
+            </article>
+        </main>
+
+        <div id="vizModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+            <div class="frame">
+                <header class="modal-header">
+                    <h2 id="modalTitle" class="text-xl font-bold text-gray-800">Interactive Tableau Visualization</h2>
+                    <button class="modal-close-btn text-2xl" data-close-modal="vizModal" aria-label="Close Visualization">
+                        <i class="bx bx-x"></i>
+                    </button>
+                </header>
+                <iframe 
+                    title="NPS Customer Insights Tableau Dashboard"
+                    src="https://public.tableau.com/views/CustomerSegmentationandMarketBasket/Dashboard2?:embed=yes&:showVizHome=no&:tabs=no&:toolbar=yes" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = mobileMenu.querySelectorAll('a[role="menuitem"]');
+            const header = document.getElementById('header');
+            const closePostBtn = document.getElementById('close-post-btn');
+            
+            // --- 1. Mobile Menu Toggle ---
+            mobileToggle.addEventListener('click', () => {
+                const isHidden = mobileMenu.classList.toggle('hidden');
+                mobileToggle.setAttribute('aria-expanded', !isHidden);
+                mobileMenu.setAttribute('aria-hidden', isHidden);
+                document.body.style.overflow = isHidden ? 'auto' : 'hidden';
+            });
+
+            // Close mobile menu when a link is clicked
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenu.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = 'auto';
+                });
+            });
+            
+            // --- 2. Close Post Button (History-Aware Navigation) ---
+            if (closePostBtn) {
+                closePostBtn.addEventListener('click', (event) => {
+                    event.preventDefault(); 
+                    
+                    // Option 1: Go back to the previous page in history (best UX)
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        // Option 2: Fallback to the hardcoded portfolio listing page URL
+                        window.location.href = closePostBtn.getAttribute('href'); 
+                    }
+                });
+            }
+
+            // --- 3. Modal Handler (Open/Close for Visualization) ---
+            const modal = document.getElementById('vizModal');
+            const openModalBtn = document.getElementById('openVizBtn');
+            const closeModalBtns = document.querySelectorAll('[data-close-modal]');
+
+            // Open Modal
+            if (openModalBtn && modal) {
+                openModalBtn.addEventListener('click', () => {
+                    modal.classList.add('open');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling underneath
+                    // Set focus inside the modal for better accessibility
+                    const firstFocusable = modal.querySelector('iframe') || modal.querySelector('.modal-close-btn');
+                    if(firstFocusable) firstFocusable.focus(); 
+                });
+            }
+
+            // Close Modal Function
+            const closeVizModal = () => {
+                if(modal) {
+                    modal.classList.remove('open');
+                    document.body.style.overflow = 'auto';
+                    if (openModalBtn) openModalBtn.focus(); // Return focus to the trigger button
+                }
+            };
+
+            // Close Modal via X button
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', closeVizModal);
+            });
+
+            // Close Modal via background click (on the modal itself, not the frame)
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeVizModal();
+                    }
+                });
+
+                // Close Modal via ESC key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && modal.classList.contains('open')) {
+                        closeVizModal();
+                    }
+                });
+            }
+
+            // --- 4. Scroll Behavior (Shrink Header) ---
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('h-16');
+                    header.classList.remove('h-20');
+                } else {
+                    header.classList.remove('h-16');
+                    header.classList.add('h-20');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

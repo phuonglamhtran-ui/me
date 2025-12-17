@@ -1,0 +1,465 @@
+ //User Information Behaviour & Data Protection Dashboard//
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study: Privacy Concerns and Information Control Among Digital Users(Neon Theme)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Inter for body/report text (sans-serif default)
+                        sans: ['Inter', 'sans-serif'], 
+                        // Poppins for section headings/theme (explicit utility class)
+                        theme: ['Poppins', 'sans-serif'], 
+                        // Dancing Script for large display text/logo
+                        display: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        // Primary theme color is Neon Green
+                        'theme-neon': '#12d640', 
+                        'theme-dark': '#010410', 
+                        'theme-accent': '#a78bfa', // Purple/Indigo kept as a secondary accent
+                        // These are included from the partial config for safety/consistency
+                        'primary-green': '#047857', 
+                        'highlight-green': '#10B981', 
+                        'detractor-red': '#DC2626', 
+                        'passive-yellow': '#F59E0B', 
+                        'promoter-green': '#059669', 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====================================================================== */
+        /* --- NEON/GLASS THEME VARIABLES & BASE STYLES --- */
+        /* ====================================================================== */
+        :root {
+            --neon-green: #12d640; 
+            --purple-accent: #a78bfa; 
+            --glass-bg: rgba(0, 0, 0, 0.75); 
+            --glass-border: rgba(18, 214, 64, 0.4); 
+            --neon-shadow: 0 0 10px rgba(18, 214, 64, 0.4); 
+            --neon-glow-text: 0 0 5px rgba(18, 214, 64, 0.8);
+            --neon-glow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Base Styles: Dark Space Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #010410; 
+            color: white; 
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Background image pseudo-element for layering/performance */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Placeholder space background image */
+            background: url('https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940') fixed center / cover; 
+            opacity: 0.1; 
+            z-index: -2;
+        }
+
+        /* --- Glass Panel Styling --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* --- Custom Navigation Link Styles (for neon effect) --- */
+        .nav-link {
+            position: relative;
+            color: white;
+            padding: 0.25rem 0;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: var(--neon-shadow);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neon-green);
+            box-shadow: var(--neon-shadow);
+        }
+        
+        /* --- Custom List Style (Neon Bullet) --- */
+        .styled-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .styled-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--neon-green); /* Neon bullet */
+            text-shadow: 0 0 5px var(--neon-green);
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
+        /* Secondary Nested List (using secondary accent color for contrast) */
+        .nested-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+            color: rgba(255, 255, 255, 0.85); /* Slightly muted text for nested list */
+        }
+        .nested-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--purple-accent); /* Purple accent for secondary bullet */
+            text-shadow: 0 0 3px var(--purple-accent);
+            font-weight: bold;
+            font-size: 0.9rem;
+            line-height: 1.2;
+        }
+
+        /* --- Custom Card Styles for Recommendations (Themed) --- */
+        .rec-card {
+            border-left: 4px solid;
+            transition: box-shadow 0.3s;
+        }
+        .rec-govt {
+            border-left-color: var(--neon-green); /* Neon Green for Government */
+            background: rgba(18, 214, 64, 0.05); /* Very slight tint */
+            box-shadow: 0 0 8px rgba(18, 214, 64, 0.2);
+        }
+        .rec-govt:hover {
+            box-shadow: 0 0 15px rgba(18, 214, 64, 0.4);
+        }
+        .rec-company {
+            border-left-color: var(--purple-accent); /* Purple Accent for Company */
+            background: rgba(167, 139, 250, 0.05); /* Very slight tint */
+            box-shadow: 0 0 8px rgba(167, 139, 250, 0.2);
+        }
+        .rec-company:hover {
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+        }
+
+
+        /* Neon Button Base Style */
+        .neon-button {
+            /* Using utility classes for background and text, but adding custom shadow */
+            box-shadow: 0 0 10px rgba(18, 214, 64, 0.5);
+            transition: box-shadow 0.3s, background-color 0.3s;
+        }
+        .neon-button:hover {
+            box-shadow: 0 0 20px rgba(18, 214, 64, 1);
+        }
+
+        /* --- Close Button for Blog Post (IMPROVED POSITIONING) --- */
+        #close-post-btn {
+            position: fixed; 
+            top: 100px;
+            right: 20px;
+            z-index: 500;
+            font-size: 2.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+        #close-post-btn:hover, #close-post-btn:focus {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            outline: none;
+        }
+        @media (min-width: 640px) { 
+            #close-post-btn {
+                top: 100px;
+                right: 40px;
+            }
+        }
+        
+        /* --- Planetary Animation System (kept for theme) --- */
+        .system {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            opacity: 0.2; 
+            pointer-events: none;
+        }
+        .sun {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            background: #ffcc00; border-radius: 50%; box-shadow: 0 0 50px #ffcc00;
+            transform: translate(-50%, -50%);
+        }
+        .ear-path, .jup-path {
+            position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .ear-path { width: 350px; height: 350px; }
+        .jup-path { width: 600px; height: 600px; }
+        .ear, .jup { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+        .ear {
+            width: 10px; height: 10px; background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green); animation: orbit-ear 25s linear infinite;
+        }
+        .jup {
+            width: 18px; height: 18px; background: #4a5568;
+            animation: orbit-jup 50s linear infinite;
+        }
+        @keyframes orbit-ear {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(175px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+        }
+        @keyframes orbit-jup {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8 bg-theme-dark text-white antialiased">
+    
+    <div class="system" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ear-path">
+            <div class="ear"></div>
+        </div>
+        <div class="jup-path">
+            <div class="jup"></div>
+        </div>
+    </div>
+    
+    <header id="header" class="fixed top-0 left-0 right-0 z-[1001] glass-panel h-20 border-b border-[var(--neon-green)] transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center h-full px-6 sm:px-12">
+            <a href="../../../index.html" class="text-3xl font-extrabold tracking-wider text-white" style="font-family: var(--font-display, 'Dancing Script', cursive); text-decoration: none; text-shadow: 0 0 8px var(--neon-green);">
+                Pansy
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-8 font-medium" aria-label="Main Navigation">
+                <a href="../../../index.html" class="nav-link">Home</a>
+                <a href="../../../Layout/about.html" class="nav-link">About</a>
+                <a href="../../../Layout/profile.html" class="nav-link">Experience</a>
+                <a href="../../../Layout/portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+                <a href="../../../Layout/story.html" class="nav-link">Blog & Stories</a>
+                <a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
+                <a href="../../../Layout/contact.html" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="social-links flex space-x-4">
+                    <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+                    <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-[var(--neon-green)] transition duration-300 hover:shadow-none" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+                </div>
+
+                <button id="mobile-toggle" class="lg:hidden text-3xl text-[var(--neon-green)] ml-4 focus:outline-none focus:ring-2 focus:ring-[var(--neon-green)] rounded" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bx bx-menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <nav id="mobile-menu" class="fixed top-20 left-0 w-full h-full bg-black/95 backdrop-blur-lg z-[999] p-6 hidden transition-transform duration-300 ease-in-out" aria-hidden="true">
+        <ul class="flex flex-col space-y-4 text-xl text-center text-white" role="menu">
+            <li><a href="../../../index.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Home</a></li>
+            <li><a href="../../../Layout/about.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">About</a></li>
+            <li><a href="../../../Layout/profile.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Experience</a></li>
+            <li><a href="../../../Layout/portfolio.html" class="block py-2 hover:text-[var(--neon-green)] nav-link active" role="menuitem" aria-current="page">Portfolio</a></li>
+            <li><a href="../../../Layout/story.html" class="block py-2 text-[var(--neon-green)] nav-link" role="menuitem">Blog & Stories</a></li>
+            <li><a href="https://drive.google.com/file/d/1BDyKJusHrmx4IbtlDwynbKSSfv2OBt4K/view" target="_blank" rel="noopener noreferrer" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Resume</a></li>
+            <li><a href="../../../Layout/contact.html" class="block py-2 hover:text-[var(--neon-green)] nav-link" role="menuitem">Contact</a></li>
+        </ul>
+        <div class="flex justify-center space-x-6 mt-8 text-white">
+            <a href="https://linkedin.com/in/han-tran-fi/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="LinkedIn Profile"><i class="bx bxl-linkedin"></i></a>
+            <a href="https://github.com/coderhani/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--neon-green)]" aria-label="GitHub Profile"><i class="bx bxl-github"></i></a>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-6 sm:px-12 pt-28 pb-12" role="main">
+        <article class="relative"> 
+            
+            <a id="close-post-btn" href="../../../Layout/portfolio.html" class="text-white hover:text-[var(--neon-green)] transition duration-300" aria-label="Close Blog Post" title="Back to Portfolio Index"> 
+                <i class="bx bx-x"></i>
+            </a>
+
+            <div class="max-w-5xl mx-auto"> 
+
+                <header class="glass-panel rounded-xl p-8 mb-4 border-t-4 border-[var(--neon-green)] shadow-[var(--neon-shadow)]">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-2 font-theme" style="text-shadow: var(--neon-glow-text);">Report: User Information Behaviour & Data Protection Dashboard</h1>
+                    <p class="text-xl text-[var(--neon-green)] font-semibold mb-4">Case Study: Privacy Concerns and Information Control Among Digital Users</p>
+                    
+                    <p class="text-sm text-gray-300">
+                        <span class="font-medium text-white">Author:</span> Pansy Phuong Lam
+                    </p>
+                    <div class="flex flex-col sm:flex-row sm:space-x-6 text-sm text-gray-400 mt-1">
+                        <p>
+                            <span class="font-medium text-white">Source:</span>
+                            <a href="https://www.doria.fi/bitstream/handle/10024/189268/tran_han.pdf?sequence=3" target="_blank" class="text-[var(--neon-green)] hover:text-white transition duration-200 break-words">Source PDF</a>
+                        </p>
+                        <p class="mt-2 sm:mt-0">
+                            <span class="font-medium text-white">Dashboard:</span>
+                            <a href="https://public.tableau.com/app/profile/hantran.fi/viz/DataPrivacyQuestionnaireDASHBOARD/OVERVIEW" target="_blank" class="text-[var(--neon-green)] hover:text-white transition duration-200 break-words">Public Tableau Dashboard</a>
+                        </p>
+                    </div>
+                </header>
+
+                <nav class="sticky-nav bg-theme-dark/80 backdrop-blur-sm p-3 mb-8 shadow-lg rounded-xl border border-[var(--glass-border)]">
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <a href="#profile" class="bg-[var(--neon-green)] hover:bg-theme-accent text-theme-dark font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out text-sm neon-button">
+                            User Profile
+                        </a>
+                        <a href="#barriers" class="bg-[var(--neon-green)] hover:bg-theme-accent text-theme-dark font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out text-sm neon-button">
+                            Barriers to Protection
+                        </a>
+                        <a href="#demand" class="bg-[var(--neon-green)] hover:bg-theme-accent text-theme-dark font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out text-sm neon-button">
+                            Regulation Demand
+                        </a>
+                        <a href="#recommendations" class="bg-[var(--neon-green)] hover:bg-theme-accent text-theme-dark font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out text-sm neon-button">
+                            Recommendations
+                        </a>
+                    </div>
+                </nav>
+
+                <section class="glass-panel rounded-xl p-6 mb-8">
+                    <p class="leading-relaxed text-gray-200 italic border-l-4 border-[var(--neon-green)] pl-4 py-2">
+                        This case study analyzes the survey data of <b style="color: rgb(220, 104, 218);">129 digital platform users</b>, a group heavily skewed towards younger demographics and students, to understand their information behavior, privacy concerns, and attitudes toward data regulation.
+                    </p>
+                </section>
+
+                <section id="profile" class="glass-panel rounded-xl p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-[var(--neon-green)] mb-4 border-b-2 border-gray-700 pb-2 font-theme">1. The Concerned and Exposed User Profile</h2>
+                    <p class="leading-relaxed text-gray-100 mb-4">
+                        The typical respondent is an <u>18-24 year-old student</u> who is a frequent digital user but demonstrates a significant vulnerability and lack of confidence regarding their data security.
+                    </p>
+                    <ul class="styled-list space-y-4 text-gray-100">
+                        <li>
+                            <span class="font-bold text-passive-yellow">High Usage, High Exposure:</span> The vast majority of users have experienced receiving unsolicited communications, with <b style="color: rgb(122, 215, 255);">91.47%</b> reporting calls, messages, or emails/pop-up advertisements from unknown sources.  Similarly, half of the respondents encounter scams or fraudulent attempts <b style="color: rgb(122, 215, 255);">Sometimes (25.00%)</b> or <b style="color: rgb(122, 215, 255);">Occasionally (25.00%)</b>.
+                        </li>
+                        <li>
+                            <span class="font-bold text-passive-yellow">High Concern, Low Protection:</span> Despite this exposure, a combined <b style="color: rgb(122, 215, 255);">87.6%</b> of users are concerned about data security. However, only <b style="color: rgb(122, 215, 255);">5.43%</b> believe they are effectively protecting their personal data today. This highlights a major gap between awareness and effective action. 
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="barriers" class="glass-panel rounded-xl p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-[var(--neon-green)] mb-4 border-b-2 border-gray-700 pb-2 font-theme">2. Barriers to Effective Self-Protection</h2>
+                    <p class="leading-relaxed text-gray-100 mb-4">
+                        The primary reasons users cite for failing to protect their data point to <u>systemic issues</u> rather than simply user negligence.
+                    </p>
+                    <ul class="styled-list space-y-4 text-gray-100">
+                        <li>
+                            <span class="font-bold text-blue-400">The "I Have No Choice" Dilemma:</span> The most cited reason for failing to protect data (<b style="color: rgb(234, 255, 142);">93 respondents</b>) is the feeling that they have <b style="color: rgb(234, 255, 142);">no choice</b> but to accept privacy policies to access services or information.
+                        </li>
+                        <li>
+                            <span class="font-bold text-blue-400">Complexity and Difficulty:</span> The second leading barrier (<b style="color: rgb(234, 255, 142);">75 respondents</b>) is that understanding privacy policies/settings is <b style="color: rgb(234, 255, 142);">difficult</b>. 
+                        </li>
+                        <li>
+                            <span class="font-bold text-blue-400">Neglected Policies:</span> This is reinforced by the fact that <b style="color: rgb(234, 255, 142);">37.98% never read</b> privacy policies before signing up for new services.
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="demand" class="glass-panel rounded-xl p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-[var(--neon-green)] mb-4 border-b-2 border-gray-700 pb-2 font-theme">3. Demand for Stricter Regulation</h2>
+                    <p class="leading-relaxed text-gray-100 mb-4">
+                        The widespread sense of lack of control and the difficulty of navigating privacy settings translates into a <u>strong demand for regulatory action and corporate responsibility</u>.
+                    </p>
+                    <ul class="styled-list space-y-4 text-gray-100">
+                        <li>
+                            <span class="font-bold text-highlight-green">Demand for Individual Control:</span> A near-unanimous <b style="color: rgb(220, 104, 218);">87.6%</b> (Strongly Agree + Agree) believe individuals must have <b style="color: rgb(220, 104, 218);">control</b> over the collection and use of their personal data.
+                        </li>
+                        <li>
+                            <span class="font-bold text-highlight-green">Demand for Stricter Laws:</span> A combined <b style="color: rgb(220, 104, 218);">88.37%</b> (Strongly Agree + Agree) agree there should be <b style="color: rgb(220, 104, 218);">stricter regulations</b> on data collection and use by companies/organizations.
+                        </li>
+                        <li>
+                            <span class="font-bold text-highlight-green">Shifting Responsibility:</span> Users place the primary responsibility for data privacy protection on <b style="color: rgb(220, 104, 218);">Companies/organizations</b> (90 respondents) and the <b style="color: rgb(220, 104, 218);">National Government</b> (78 respondents), ahead of individuals (77 respondents). 
+                        </li>
+                    </ul>
+                    <p class="mt-6 p-3 bg-theme-dark/50 border-l-4 border-[var(--neon-green)] rounded-md italic text-gray-200">
+                        This case study suggests that while users are highly concerned about privacy, they feel constrained by platforms' design and policies, leading to a strong push for external regulatory and corporate action to bridge the gap between their desire for control and their actual ability to protect their data.
+                    </p>
+                </section>
+
+                <section id="recommendations" class="glass-panel rounded-xl p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-[var(--neon-green)] mb-6 border-b-2 border-gray-700 pb-2 font-theme">Recommendations Based on User Information Behavior Case Study</h2>
+                    <p class="leading-relaxed text-gray-100 mb-6">
+                        Based on the analysis, which revealed a paradox of high concern and low self-protection driven by complexity and perceived lack of choice, the following recommendations are suggested for companies and governments/educational institutions:
+                    </p>
+
+                    <div class="rec-card rec-govt p-4 rounded-r-lg mb-6">
+                        <h3 class="text-xl font-bold text-[var(--neon-green)] flex items-center mb-4">
+                            <span class="mr-2 text-2xl" style="text-shadow: 0 0 5px var(--neon-green);">🎯</span> For Governments and Regulators
+                        </h3>
+                        <p class="text-sm text-gray-400 italic mb-4">Regulators are viewed as primary protectors of data privacy. Their role should focus on enforcing accountability and improving user literacy.</p>
+                        <ul class="space-y-3 nested-list ml-4 text-white">
+                            <li class="pl-0"><span class="font-bold text-detractor-red">Enforce Stricter Laws and Penalties (Highest Priority):</span> Implement and stringently enforce stricter laws and penalties for data breaches. This aligns with the near-unanimous demand for stricter regulations.</li>
+                            <li class="pl-0"><span class="font-bold text-detractor-red">Mandate Simple and Clear Policies:</span> Address the difficulty users have understanding privacy policies. Regulations should require platforms to provide clear explanations of how data will be used in standardized, easy-to-digest formats, moving beyond legal jargon.</li>
+                            <li class="pl-0"><span class="font-bold text-detractor-red">Incorporate Data Privacy Education:</span> Play a leading role in educating the public about data privacy rights and best practices. Furthermore, enforce the incorporation of data privacy education into the curriculum of educational institutions.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rec-card rec-company p-4 rounded-r-lg">
+                        <h3 class="text-xl font-bold text-[var(--purple-accent)] flex items-center mb-4">
+                            <span class="mr-2 text-2xl" style="text-shadow: 0 0 5px var(--purple-accent);">🖥️</span> For Digital Platforms and Companies
+                        </h3>
+                        <p class="text-sm text-gray-400 italic mb-4">Companies are seen as the most responsible party for protecting data. They must prioritize ethical data collection and user empowerment.</p>
+                        <ul class="space-y-3 nested-list ml-4 text-white">
+                            <li class="pl-0"><span class="font-bold" style="color: rgb(76, 253, 85);">Implement Ethical Data Collection (Highest Priority):</span> Companies should only collect data strictly necessary for providing their services. This tackles the fundamental issue of users feeling they "have no choice" but to agree to broad data collection.</li>
+                            <li class="pl-0"><span class="font-bold" style="color: rgb(76, 253, 85);">Strengthen Security Measures:</span> Implement strict security measures to protect the data already collected. Users must trust the security measures implemented by online platforms.</li>
+                            <li class="pl-0"><span class="font-bold" style="color: rgb(76, 253, 85);">Improve User Control Interface:</span> Make privacy settings and permissions (for location, camera, etc.) easier to find, understand, and update. The current design is a barrier to self-protection.</li>
+                            <li class="pl-0"><span class="font-bold" style="color: rgb(76, 253, 85);">Mandate Explicit Consent:</span> Routinely obtain explicit consent before collecting personal data, not just general agreement to a policy.</li>
+                        </ul>
+                    </div>
+                </section>
+
+    <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-[var(--neon-green)] text-center text-sm text-gray-400">
+        <p>&copy; 2025 Copyright © Pansy Phuong Lam Tran</p>
+    </footer>
+
+            </div>
+            
+        </article>
+    </main>
+    
+    <script>
+        // Mobile menu toggle logic
+        document.getElementById('mobile-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const expanded = this.getAttribute('aria-expanded') === 'true' || false;
+            this.setAttribute('aria-expanded', !expanded);
+            menu.classList.toggle('hidden');
+        });
+        
+        // Hide mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.getElementById('mobile-toggle').setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+
+</body>
+</html>
